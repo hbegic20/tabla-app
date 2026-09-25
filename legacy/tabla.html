@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tabla — English &amp; Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #16211C;
+    --panel: #1F2C25;
+    --panel-2: #253327;
+    --text: #EDEAE0;
+    --muted: #96A69A;
+    --accent: #E8B33D;
+    --accent-ink: #3A2A05;
+    --accent2: #6FA8C9;
+    --accent2-ink: #082532;
+    --border: rgba(237,234,224,0.14);
+    --danger: #D97F6B;
+    --good: #7FBF8A;
+    --radius: 4px;
+    --rule-line: rgba(237,234,224,0.05);
+    --blueprint-line: rgba(111,168,201,0.10);
+    --blueprint-line-major: rgba(111,168,201,0.18);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-theme="light"] {
+    --bg: #F4F3EE;
+    --panel: #FFFFFF;
+    --panel-2: #ECEAE2;
+    --text: #212922;
+    --muted: #636F65;
+    --accent: #B4790F;
+    --accent-ink: #FFF6E2;
+    --accent2: #2E6E8E;
+    --accent2-ink: #E9F4FA;
+    --border: rgba(33,41,34,0.14);
+    --danger: #B34C36;
+    --good: #2E7D42;
+    --rule-line: rgba(33,41,34,0.07);
+    --blueprint-line: rgba(46,110,142,0.10);
+    --blueprint-line-major: rgba(46,110,142,0.20);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F4F3EE;
+      --panel: #FFFFFF;
+      --panel-2: #ECEAE2;
+      --text: #212922;
+      --muted: #636F65;
+      --accent: #B4790F;
+      --accent-ink: #FFF6E2;
+      --accent2: #2E6E8E;
+      --accent2-ink: #E9F4FA;
+      --border: rgba(33,41,34,0.14);
+      --danger: #B34C36;
+      --good: #2E7D42;
+      --rule-line: rgba(33,41,34,0.07);
+      --blueprint-line: rgba(46,110,142,0.10);
+      --blueprint-line-major: rgba(46,110,142,0.20);
+    }
+  }
+  html, body { height: 100%; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    position: relative;
+    background: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(255,255,255,0.035) 0, transparent 45%),
+                       radial-gradient(circle at 85% 85%, rgba(255,255,255,0.025) 0, transparent 40%);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100%;
+    transition: background-color .3s ease;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity .4s ease;
+  }
+  body.side-english::before {
+    opacity: 1;
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 33px, var(--rule-line) 33px, var(--rule-line) 34px);
+    background-position: 0 96px;
+  }
+  body.side-architecture::before {
+    opacity: 1;
+    background-image:
+      repeating-linear-gradient(to right, var(--blueprint-line) 0, var(--blueprint-line) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(to bottom, var(--blueprint-line) 0, var(--blueprint-line) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(to right, var(--blueprint-line-major) 0, var(--blueprint-line-major) 1px, transparent 1px, transparent 140px),
+      repeating-linear-gradient(to bottom, var(--blueprint-line-major) 0, var(--blueprint-line-major) 1px, transparent 1px, transparent 140px);
+  }
+  .wrap, header.top, nav.main-tabs, #english-view, #architecture-view { position: relative; z-index: 1; }
+  h1, h2, h3, .display {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+  }
+  header.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 34px;
+  }
+  header.top .titles { display: flex; flex-direction: column; gap: 2px; }
+  .mark-row { display: flex; align-items: center; gap: 10px; }
+  .mark-row svg { width: 34px; height: 34px; flex-shrink: 0; }
+  header.top h1 {
+    font-size: 40px;
+    line-height: 1;
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+  }
+  .title-underline {
+    display: block;
+    width: 132px;
+    max-width: 100%;
+    height: 10px;
+    margin-top: 2px;
+  }
+  .title-underline path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  header.top p.tagline {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-family: 'Caveat', cursive;
+    font-size: 21px;
+    font-weight: 500;
+    max-width: 34ch;
+    line-height: 1.15;
+  }
+  .theme-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { border-color: var(--accent); }
+  .theme-btn svg { width: 18px; height: 18px; }
+
+  nav.main-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  nav.main-tabs button {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 4px 14px;
+    margin-right: 22px;
+    cursor: pointer;
+    position: relative;
+    transition: color .15s ease;
+  }
+  nav.main-tabs button:hover { color: var(--text); }
+  nav.main-tabs button.active { color: var(--text); }
+  nav.main-tabs button .underline {
+    position: absolute;
+    left: 0; bottom: -2px;
+    width: 100%; height: 8px;
+    overflow: visible;
+  }
+  nav.main-tabs button .underline path {
+    fill: none;
+    stroke: var(--tab-accent, var(--accent));
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 140;
+    stroke-dashoffset: 140;
+  }
+  nav.main-tabs button.active .underline path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset .35s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    nav.main-tabs button.active .underline path { transition: none; }
+  }
+  nav.main-tabs button[data-main="english"] { --tab-accent: var(--accent); }
+  nav.main-tabs button[data-main="architecture"] { --tab-accent: var(--accent2); }
+
+  nav.sub-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  nav.sub-tabs button {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  nav.sub-tabs button.active { color: var(--bg); border-color: transparent; }
+  #english-view nav.sub-tabs button.active { background: var(--accent); }
+  #architecture-view nav.sub-tabs button.active { background: var(--accent2); }
+  nav.sub-tabs button:not(.active):hover { border-color: var(--text); color: var(--text); }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .muted { color: var(--muted); }
+  .hidden { display: none !important; }
+
+  /* Chat */
+  .chat-log {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 48vh;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 14px;
+  }
+  .msg { max-width: 88%; padding: 2px 0 2px 12px; border-left: 3px solid var(--border); font-size: 14.5px; line-height: 1.5; }
+  .msg.user { align-self: flex-end; border-left-color: var(--msg-user, var(--accent)); text-align: left; }
+  .msg.tutor { align-self: flex-start; border-left-color: var(--msg-tutor, var(--accent2)); }
+  .msg .role { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 2px; }
+  .msg.thinking { color: var(--muted); font-style: italic; }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input-row textarea {
+    flex: 1;
+    resize: none;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    min-height: 44px;
+    max-height: 120px;
+  }
+  .chat-input-row textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btn {
+    appearance: none;
+    border: none;
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    cursor: pointer;
+    color: var(--bg);
+    background: var(--accent);
+    white-space: nowrap;
+  }
+  .btn.blue { background: var(--accent2); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .empty-hint { color: var(--muted); font-size: 13.5px; padding: 6px 0 12px; }
+
+  /* Flashcards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .flip-card { perspective: 900px; height: 122px; cursor: pointer; }
+  .flip-card:nth-child(3n+1) { transform: rotate(-0.6deg); }
+  .flip-card:nth-child(3n+2) { transform: rotate(0.5deg); }
+  .flip-card:nth-child(3n) { transform: rotate(-0.3deg); }
+  .flip-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform .5s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 10px;
+    text-align: center;
+    background: var(--panel-2);
+    box-shadow: 0 1px 0 var(--border);
+  }
+  .flip-face::before {
+    content: "";
+    position: absolute;
+    top: 7px; left: 7px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+  .flip-face.front { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+  .flip-face.back { transform: rotateY(180deg); background: var(--accent-ink); }
+  .flip-face.back .bs { font-weight: 700; font-size: 15px; font-family: 'Fraunces', serif; }
+  .flip-face.back .ex { font-size: 11.5px; color: var(--muted); margin-top: 6px; font-family: 'Caveat', cursive; font-size: 15px; line-height: 1.2; }
+
+  /* Quiz */
+  .progress-line { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+  .q-text { font-size: 17px; line-height: 1.4; margin-bottom: 16px; font-family: 'Fraunces', serif; font-weight: 600; }
+  .options { display: flex; flex-direction: column; gap: 0; }
+  .option {
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text);
+    padding: 12px 4px;
+    font-size: 14.5px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .option:last-child { border-bottom: none; }
+  .option:hover:not(:disabled) { color: var(--accent); }
+  #architecture-view .option:hover:not(:disabled) { color: var(--accent2); }
+  .option.correct { color: var(--good); font-weight: 600; }
+  .option.wrong { color: var(--danger); text-decoration: line-through; }
+  .option:disabled { cursor: default; }
+  .explain { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 13.5px; color: var(--muted); }
+  .quiz-actions { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .score-screen { text-align: center; padding: 20px 0; }
+  .score-screen .big { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 700; }
+
+  /* Roadmap */
+  .progress-bar-outer {
+    height: 8px; border-radius: 4px; background: var(--panel-2);
+    border: 1px solid var(--border); overflow: hidden; margin-bottom: 18px;
+  }
+  .progress-bar-inner { height: 100%; background: var(--accent2); border-radius: 4px; transition: width .4s ease; }
+  .timeline { position: relative; padding-left: 40px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 15px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .topic {
+    position: relative;
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 13px 0;
+  }
+  .check-btn {
+    position: absolute; left: -40px; top: 10px;
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--muted);
+    background: var(--panel); flex-shrink: 0; cursor: pointer; z-index: 1;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+    font-family: 'Fraunces', serif; font-size: 12.5px; font-weight: 600; color: var(--muted);
+  }
+  .check-btn svg { width: 14px; height: 14px; stroke: var(--bg); fill: none; stroke-width: 3; stroke-dasharray: 20; stroke-dashoffset: 20; display: none; }
+  .topic.done .check-btn { background: var(--accent2); border-color: var(--accent2); }
+  .topic.done .check-btn svg { display: block; stroke-dashoffset: 0; transition: stroke-dashoffset .3s ease; }
+  .topic.done .check-btn .num { display: none; }
+  .topic-body { padding-top: 4px; }
+  .topic-body h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .topic.done .topic-body h3 { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--border); }
+  .topic-body p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+  .ask-link {
+    background: none; border: none; color: var(--accent2); font-size: 12.5px;
+    padding: 6px 0 0; cursor: pointer; font-weight: 600; font-family: inherit;
+  }
+  .ask-link:hover { text-decoration: underline; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-inner, .progress-bar-inner, .check-btn svg { transition: none !important; }
+  }
+  @media (max-width: 480px) {
+    header.top h1 { font-size: 23px; }
+    .wrap { padding: 20px 14px 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="titles">
+      <div class="mark-row">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect x="2" y="4" width="15" height="19" rx="1.5" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <line x1="5.5" y1="9" x2="13.5" y2="9" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="5.5" y1="13" x2="13.5" y2="13" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="5.5" y1="17" x2="11" y2="17" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/>
+          <g transform="translate(22,4)">
+            <rect x="0" y="0" width="16" height="19" rx="1.5" fill="none" stroke="var(--accent2)" stroke-width="2"/>
+            <line x1="3" y1="5" x2="13" y2="5" stroke="var(--accent2)" stroke-width="1.2"/>
+            <line x1="3" y1="9" x2="13" y2="9" stroke="var(--accent2)" stroke-width="1.2"/>
+            <line x1="3" y1="13" x2="9" y2="13" stroke="var(--accent2)" stroke-width="1.2"/>
+            <circle cx="3" cy="5" r="1" fill="var(--accent2)"/>
+            <circle cx="13" cy="9" r="1" fill="var(--accent2)"/>
+          </g>
+        </svg>
+        <h1>Tabla
+          <svg class="title-underline" viewBox="0 0 132 10" aria-hidden="true">
+            <path d="M2 6.5 C 20 2, 40 8.5, 60 5 S 100 2, 130 6"/>
+          </svg>
+        </h1>
+      </div>
+      <p class="tagline">one board for English, one for backend — pick a side, chalk in hand</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">
+      <svg id="themeIcon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </header>
+
+  <nav class="main-tabs">
+    <button data-main="english" class="active">English<svg class="underline" viewBox="0 0 100 8" preserveAspectRatio="none"><path d="M1 4.5 C 20 1.5, 45 6.5, 60 3.5 S 85 1, 99 4"/></svg></button>
+    <button data-main="architecture">Architecture<svg class="underline" viewBox="0 0 130 8" preserveAspectRatio="none"><path d="M1 4.5 C 25 1.5, 55 6.5, 75 3.5 S 110 1, 129 4"/></svg></button>
+  </nav>
+
+  <!-- ENGLISH -->
+  <section id="english-view">
+    <nav class="sub-tabs">
+      <button data-sub="chat" class="active">Chat with tutor</button>
+      <button data-sub="vocab">Vocabulary</button>
+      <button data-sub="quiz">Grammar quiz</button>
+    </nav>
+
+    <div class="panel" id="english-chat" data-view="chat">
+      <div class="chat-log" id="englishChatLog"></div>
+      <div class="chat-input-row">
+        <textarea id="englishChatInput" placeholder="Write something in English — a sentence, a question, anything on your mind..." rows="1"></textarea>
+        <button class="btn" id="englishChatSend">Send</button>
+      </div>
+    </div>
+
+    <div class="panel hidden" id="english-vocab" data-view="vocab">
+      <p class="empty-hint" style="padding-top:0">Tap a card to flip it. Marked words are saved as you go.</p>
+      <div class="card-grid" id="vocabGrid"></div>
+    </div>
+
+    <div class="panel hidden" id="english-quiz" data-view="quiz">
+      <div id="englishQuizBody"></div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture-view" class="hidden">
+    <nav class="sub-tabs">
+      <button data-sub="roadmap" class="active">Roadmap</button>
+      <button data-sub="mentor">Ask a mentor</button>
+      <button data-sub="quiz">Quiz</button>
+    </nav>
+
+    <div class="panel" id="architecture-roadmap" data-view="roadmap">
+      <div class="progress-line"><span id="roadmapProgressLabel">0 / 0 topics</span><span></span></div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="roadmapProgressBar" style="width:0%"></div></div>
+      <div id="roadmapList" class="timeline"></div>
+    </div>
+
+    <div class="panel hidden" id="architecture-mentor" data-view="mentor">
+      <div class="chat-log" id="archChatLog"></div>
+      <div class="chat-input-row">
+        <textarea id="archChatInput" placeholder="Ask about databases, caching, system design, anything backend..." rows="1"></textarea>
+        <button class="btn blue" id="archChatSend">Send</button>
+      </div>
+    </div>
+
+    <div class="panel hidden" id="architecture-quiz" data-view="quiz">
+      <div id="archQuizBody"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- capability wiring ---------- */
+  let dbCap = null, userCap = null, sampleCap = null;
+  async function getCapability(name){
+    try {
+      if (!window.claude || typeof window.claude.use !== 'function') return null;
+      return await window.claude.use(name);
+    } catch(e){ return null; }
+  }
+  function safeLocal(fn, fallback){
+    try { return fn(); } catch(e){ return fallback; }
+  }
+
+  /* ---------- state ---------- */
+  const LS_KEY = 'tabla_state_v1';
+  const state = safeLocal(() => JSON.parse(localStorage.getItem(LS_KEY) || 'null'), null) || {
+    roadmapDone: {},
+    vocabKnown: {},
+    quizBest: { english: 0, architecture: 0 }
+  };
+  const chats = { english: [], architecture: [] };
+
+  function persistLocal(){
+    safeLocal(() => localStorage.setItem(LS_KEY, JSON.stringify(state)), null);
+  }
+  async function persistRemote(){
+    if (!dbCap) return;
+    try {
+      const ref = dbCap.collection('data/users/me/tabla').doc('progress');
+      await ref.set(state);
+    } catch(e){ /* best-effort only */ }
+  }
+  function saveState(){
+    persistLocal();
+    persistRemote();
+  }
+  async function loadRemote(){
+    dbCap = await getCapability('db');
+    userCap = await getCapability('user');
+    if (!dbCap) return;
+    try {
+      const ref = dbCap.collection('data/users/me/tabla').doc('progress');
+      const snap = await ref.get();
+      const data = snap && typeof snap.data === 'function' ? snap.data() : (snap && snap.exists ? snap.value : null);
+      if (data && typeof data === 'object') {
+        Object.assign(state, data);
+        renderRoadmap();
+        renderVocab();
+      }
+    } catch(e){ /* keep local state */ }
+  }
+
+  async function initSample(){
+    sampleCap = await getCapability('sample');
+  }
+
+  /* ---------- theme ---------- */
+  const root = document.documentElement;
+  const savedTheme = safeLocal(() => localStorage.getItem('tabla_theme'), null);
+  if (savedTheme === 'light' || savedTheme === 'dark') root.setAttribute('data-theme', savedTheme);
+  function currentIsDark(){
+    const t = root.getAttribute('data-theme');
+    if (t === 'dark') return true;
+    if (t === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function paintThemeIcon(){
+    const icon = document.getElementById('themeIcon');
+    icon.innerHTML = currentIsDark()
+      ? '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'
+      : '<path d="M21 12.5A8.5 8.5 0 1 1 11.5 3a7 7 0 0 0 9.5 9.5z"/>';
+  }
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const next = currentIsDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    safeLocal(() => localStorage.setItem('tabla_theme', next), null);
+    paintThemeIcon();
+  });
+  paintThemeIcon();
+
+  /* ---------- tab navigation ---------- */
+  const mainViews = { english: document.getElementById('english-view'), architecture: document.getElementById('architecture-view') };
+  document.body.classList.add('side-english');
+  document.querySelectorAll('nav.main-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav.main-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const which = btn.getAttribute('data-main');
+      Object.entries(mainViews).forEach(([k, el]) => el.classList.toggle('hidden', k !== which));
+      document.body.classList.toggle('side-english', which === 'english');
+      document.body.classList.toggle('side-architecture', which === 'architecture');
+    });
+  });
+  document.querySelectorAll('#english-view nav.sub-tabs, #architecture-view nav.sub-tabs').forEach(nav => {
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-sub]');
+      if (!btn) return;
+      const parent = nav.parentElement;
+      nav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const sub = btn.getAttribute('data-sub');
+      parent.querySelectorAll('.panel').forEach(p => p.classList.toggle('hidden', p.getAttribute('data-view') !== sub));
+    });
+  });
+
+  /* ===================================================================
+     CHAT (shared between English tutor + Architecture mentor)
+  =================================================================== */
+  const ENGLISH_SYSTEM = "You are a warm, encouraging English tutor helping a native Bosnian speaker practise English. " +
+    "Reply mainly in English, at a natural but not overly advanced level. When the learner makes a grammar, word-order, " +
+    "preposition or word-choice mistake, gently show the corrected version and give a one-sentence explanation. If a rule is " +
+    "genuinely confusing, add one short clarifying note in Bosnian in parentheses. Keep replies conversational and fairly short " +
+    "(2-5 sentences), and end with a natural follow-up question to keep the conversation going.";
+
+  const ARCH_SYSTEM = "You are an experienced backend and software architecture mentor. You are talking to a developer who is " +
+    "strong on frontend (JS/React-type work) but new to backend and system design. Explain concepts clearly and practically, " +
+    "connect new ideas to frontend concepts they likely already know when it helps, use short concrete examples or tiny code " +
+    "snippets where useful, and avoid unnecessary jargon. Keep answers focused — a few short paragraphs or a short list, not an essay.";
+
+  function makeChatController(cfg){
+    const { key, logEl, inputEl, sendBtn, system, accentVar } = cfg;
+    logEl.style.setProperty('--msg-user', accentVar === 'accent' ? 'var(--accent)' : 'var(--accent2)');
+    logEl.style.setProperty('--msg-tutor', accentVar === 'accent' ? 'var(--accent2)' : 'var(--accent)');
+
+    function render(){
+      logEl.innerHTML = '';
+      if (chats[key].length === 0) {
+        const hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.style.padding = '0';
+        hint.textContent = key === 'english'
+          ? 'Say hello, describe your day, or ask about a grammar point — the tutor will jump in.'
+          : 'Ask about anything backend: databases, caching, APIs, scaling, whatever you\'re curious about.';
+        logEl.appendChild(hint);
+        return;
+      }
+      chats[key].forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'msg ' + (m.role === 'user' ? 'user' : 'tutor') + (m.thinking ? ' thinking' : '');
+        const roleLabel = document.createElement('span');
+        roleLabel.className = 'role';
+        roleLabel.textContent = m.role === 'user' ? 'You' : (key === 'english' ? 'Tutor' : 'Mentor');
+        div.appendChild(roleLabel);
+        const body = document.createElement('div');
+        body.textContent = m.content;
+        div.appendChild(body);
+        logEl.appendChild(div);
+      });
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    async function send(prefill){
+      const text = (prefill !== undefined ? prefill : inputEl.value).trim();
+      if (!text) return;
+      inputEl.value = '';
+      autoGrow(inputEl);
+      chats[key].push({ role: 'user', content: text });
+      render();
+
+      if (!sampleCap) {
+        chats[key].push({ role: 'assistant', content: "The AI tutor isn't available in this view right now — try opening this artifact directly in Claude." });
+        render();
+        return;
+      }
+
+      const thinkingMsg = { role: 'assistant', content: 'Thinking…', thinking: true };
+      chats[key].push(thinkingMsg);
+      render();
+      sendBtn.disabled = true;
+
+      const turns = [{ role: 'user', content: system + "\n\nConversation so far, respond only to the latest learner message:" }];
+      chats[key].filter(m => m !== thinkingMsg).forEach(m => turns.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+
+      try {
+        const result = await sampleCap(turns, {
+          modelTier: 'default',
+          onText: ({ text }) => { thinkingMsg.content = text; thinkingMsg.thinking = false; render(); }
+        });
+        thinkingMsg.content = result.text || thinkingMsg.content;
+        thinkingMsg.thinking = false;
+      } catch(err) {
+        thinkingMsg.content = "Couldn't reach the AI just now (" + (err && err.code ? err.code : 'error') + "). Try again in a moment.";
+        thinkingMsg.thinking = false;
+      }
+      sendBtn.disabled = false;
+      render();
+    }
+
+    sendBtn.addEventListener('click', () => send());
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+    inputEl.addEventListener('input', () => autoGrow(inputEl));
+
+    render();
+    return { send, render };
+  }
+
+  function autoGrow(el){
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  const englishChat = makeChatController({
+    key: 'english', logEl: document.getElementById('englishChatLog'),
+    inputEl: document.getElementById('englishChatInput'), sendBtn: document.getElementById('englishChatSend'),
+    system: ENGLISH_SYSTEM, accentVar: 'accent'
+  });
+  const archChat = makeChatController({
+    key: 'architecture', logEl: document.getElementById('archChatLog'),
+    inputEl: document.getElementById('archChatInput'), sendBtn: document.getElementById('archChatSend'),
+    system: ARCH_SYSTEM, accentVar: 'accent2'
+  });
+
+  function jumpToMentorWith(question){
+    document.querySelector('nav.main-tabs button[data-main="architecture"]').click();
+    document.querySelector('#architecture-view nav.sub-tabs button[data-sub="mentor"]').click();
+    archChat.send(question);
+  }
+  function jumpToTutorWith(question){
+    document.querySelector('nav.main-tabs button[data-main="english"]').click();
+    document.querySelector('#english-view nav.sub-tabs button[data-sub="chat"]').click();
+    englishChat.send(question);
+  }
+
+  /* ===================================================================
+     VOCABULARY
+  =================================================================== */
+  const VOCAB = [
+    { en: "deadline", bs: "rok", ex: "We need to finish this before the deadline." },
+    { en: "to figure out", bs: "shvatiti / dokučiti", ex: "I finally figured out why the build was failing." },
+    { en: "reliable", bs: "pouzdan", ex: "This library is fast and reliable." },
+    { en: "to rely on", bs: "osloniti se na", ex: "You can rely on her to fix it quickly." },
+    { en: "workaround", bs: "privremeno rješenje", ex: "There's no real fix yet, only a workaround." },
+    { en: "to bring up", bs: "pokrenuti (temu)", ex: "She brought up a good point in the meeting." },
+    { en: "thorough", bs: "temeljit", ex: "He did a thorough review of the code." },
+    { en: "to catch up", bs: "nadoknaditi", ex: "I need to catch up on my emails today." },
+    { en: "straightforward", bs: "jednostavno, jasno", ex: "The setup was pretty straightforward." },
+    { en: "to look into", bs: "istražiti", ex: "Can you look into why the server is slow?" },
+    { en: "trade-off", bs: "kompromis", ex: "Every architecture decision has trade-offs." },
+    { en: "to roll out", bs: "pustiti u rad, objaviti", ex: "We're rolling out the update next week." },
+    { en: "in the long run", bs: "dugoročno gledano", ex: "It's slower now but cheaper in the long run." },
+    { en: "to keep up with", bs: "pratiti (tempo/novosti)", ex: "It's hard to keep up with all the new frameworks." }
+  ];
+
+  function renderVocab(){
+    const grid = document.getElementById('vocabGrid');
+    grid.innerHTML = '';
+    VOCAB.forEach((w, i) => {
+      const card = document.createElement('div');
+      card.className = 'flip-card';
+      card.innerHTML =
+        '<div class="flip-inner">' +
+          '<div class="flip-face front">' + w.en + '</div>' +
+          '<div class="flip-face back"><div class="bs">' + w.bs + '</div><div class="ex">' + w.ex + '</div></div>' +
+        '</div>';
+      card.addEventListener('click', () => card.classList.toggle('flipped'));
+      grid.appendChild(card);
+    });
+  }
+
+  /* ===================================================================
+     QUIZZES (shared engine)
+  =================================================================== */
+  const ENGLISH_QUIZ = [
+    { q: "Which is correct?", options: ["I have 25 years.", "I am 25 years old.", "I has 25 years old.", "I'm having 25 years."], correct: 1, explain: "In English, age uses 'to be': I am 25 years old — not 'to have', unlike Bosnian 'imam 25 godina'." },
+    { q: "Choose the correct sentence:", options: ["She is married with a doctor.", "She is married to a doctor.", "She is married on a doctor.", "She married with a doctor."], correct: 1, explain: "'Married to' is the fixed preposition in English, even though Bosnian uses 'udana za'." },
+    { q: "Which is correct?", options: ["I'm agree with you.", "I agree with you.", "I'm agreeing with you.", "I am agree you."], correct: 1, explain: "'Agree' is a normal verb, not used with 'to be' — say 'I agree', not 'I'm agree'." },
+    { q: "Pick the right option:", options: ["Depends of the weather.", "It depends of the weather.", "It depends on the weather.", "It's depend on the weather."], correct: 2, explain: "The fixed phrase is 'depends on', not 'depends of'." },
+    { q: "Which sentence is correct?", options: ["I look forward to meet you.", "I look forward to meeting you.", "I look forward meeting you.", "I'm looking forward meet you."], correct: 1, explain: "After 'look forward to', use the -ing form: 'to meeting', because here 'to' is a preposition, not part of an infinitive." },
+    { q: "Choose correctly:", options: ["He explained me the problem.", "He explained to me the problem.", "He explained me about the problem.", "He explained the problem to me."], correct: 3, explain: "'Explain' takes an object then 'to' + person: 'explain the problem to me' — you can't say 'explain me'." },
+    { q: "Which is right?", options: ["I'm working here since 2019.", "I work here since 2019.", "I have worked here since 2019.", "I was working here since 2019."], correct: 2, explain: "'Since + a point in time' needs the present perfect: 'I have worked here since 2019'." },
+    { q: "Pick the correct sentence:", options: ["It's very important thing.", "It's a very important thing.", "It's very important a thing.", "Is very important thing."], correct: 1, explain: "Singular countable nouns need an article: 'a very important thing'. Bosnian has no articles, so this one's easy to forget." },
+    { q: "Which is correct?", options: ["I'm boring in this meeting.", "I'm bored in this meeting.", "I'm boring of this meeting.", "I bore in this meeting."], correct: 1, explain: "'Bored' describes how you feel; 'boring' describes the thing causing the feeling. The meeting is boring, you are bored." },
+    { q: "Choose the right option:", options: ["Let's discuss about the plan.", "Let's discuss the plan.", "Let's discuss for the plan.", "Let's discussing the plan."], correct: 1, explain: "'Discuss' already includes the meaning of 'about' — no preposition needed: 'discuss the plan'." },
+    { q: "Which is correct?", options: ["I need to go in the city.", "I need to go to the city.", "I need to go on the city.", "I need go to the city."], correct: 1, explain: "Movement toward a place uses 'to': 'go to the city', not 'in the city' (which describes location, not direction)." },
+    { q: "Pick the correct sentence:", options: ["Everybody are here.", "Everybody is here.", "Everybody were here.", "Everybody have here."], correct: 1, explain: "'Everybody' is grammatically singular in English, so it takes 'is', even though it refers to many people." }
+  ];
+
+  const ARCH_QUIZ = [
+    { q: "What does REST stand for, and what best describes it?", options: ["A specific programming language", "An architectural style for designing networked APIs using standard HTTP methods", "A database engine", "A type of message queue"], correct: 1, explain: "REST (Representational State Transfer) is a style for structuring APIs around resources and standard HTTP verbs (GET, POST, PUT, DELETE), not a language or product." },
+    { q: "What is the main purpose of caching?", options: ["To permanently store all application data", "To reduce load and latency by reusing previously computed or fetched results", "To replace the database entirely", "To encrypt data in transit"], correct: 1, explain: "A cache stores fast-access copies of data so repeated requests don't have to hit a slower source (like a database) every time." },
+    { q: "In a typical relational database, what does 'normalization' aim to reduce?", options: ["Query speed", "Data redundancy and inconsistency", "The number of tables", "Network latency"], correct: 1, explain: "Normalization organizes data to avoid storing the same information in multiple places, reducing redundancy and the risk of inconsistent updates." },
+    { q: "What's a key difference between a monolith and microservices?", options: ["Monoliths can't use databases", "Microservices split an app into independently deployable services; a monolith is one deployable unit", "Microservices are always faster", "Monoliths only run on one server ever"], correct: 1, explain: "The core distinction is deployment and boundaries: microservices are separate, independently deployable services communicating over a network; a monolith ships as a single unit." },
+    { q: "Why would you use a message queue (like RabbitMQ or SQS) between services?", options: ["To make services talk synchronously and instantly", "To decouple services and let them process work asynchronously and reliably", "To store user passwords", "To replace HTTP entirely"], correct: 1, explain: "Queues let a producer hand off work without waiting for the consumer, smoothing out spikes and letting each side fail or scale independently." },
+    { q: "What does 'horizontal scaling' mean?", options: ["Making a single server more powerful (more CPU/RAM)", "Adding more machines/instances to share the load", "Reducing the number of servers", "Increasing database columns"], correct: 1, explain: "Horizontal scaling adds more instances running in parallel (often behind a load balancer), as opposed to vertical scaling, which upgrades a single machine." },
+    { q: "What is the main job of a load balancer?", options: ["To compress images", "To distribute incoming requests across multiple servers", "To store session data permanently", "To write logs to disk"], correct: 1, explain: "A load balancer spreads traffic across several backend instances so no single server gets overwhelmed, and can reroute around failed instances." },
+    { q: "What's the difference between authentication and authorization?", options: ["They are the same thing", "Authentication verifies who you are; authorization decides what you're allowed to do", "Authorization verifies identity; authentication grants permissions", "Neither applies to APIs"], correct: 1, explain: "Authentication = proving identity (e.g. login). Authorization = deciding what an authenticated identity is permitted to access or do." },
+    { q: "Why use an index on a database column?", options: ["To make writes faster in every case", "To speed up lookups/queries on that column, at some cost to write speed", "To encrypt the column", "Indexes have no effect on performance"], correct: 1, explain: "An index lets the database find matching rows quickly without scanning the whole table, though it adds overhead to inserts/updates on that column." },
+    { q: "What is 'idempotency' in the context of an API?", options: ["An API that only works once", "Calling the same request multiple times has the same effect as calling it once", "A type of encryption", "A synonym for authentication"], correct: 1, explain: "An idempotent operation (like a standard PUT or DELETE) can be safely retried — repeating it doesn't cause extra side effects, which matters a lot for reliability over unreliable networks." },
+    { q: "What's a common reason to introduce a CDN (Content Delivery Network)?", options: ["To run your database", "To serve static assets from servers geographically closer to users, reducing latency", "To replace your backend logic", "To manage user authentication"], correct: 1, explain: "A CDN caches and serves static content (images, JS, CSS) from edge locations near the user, cutting load times and reducing load on your origin server." },
+    { q: "In CI/CD, what does 'CI' (Continuous Integration) mainly refer to?", options: ["Automatically deploying to production on every commit with no checks", "Frequently merging code changes and automatically building/testing them", "Manually testing code once a month", "A cloud hosting provider"], correct: 1, explain: "CI is the practice of integrating code changes frequently and running automated builds/tests on each change, catching problems early." }
+  ];
+
+  function shuffledIndices(n){
+    const arr = Array.from({length:n}, (_,i)=>i);
+    for (let i = arr.length -1; i>0; i--){ const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    return arr;
+  }
+
+  function makeQuizController(cfg){
+    const { key, container, bank, onAskMore } = cfg;
+    let order = shuffledIndices(bank.length);
+    let idx = 0, score = 0, answered = false;
+
+    function renderQuestion(){
+      const item = bank[order[idx]];
+      container.innerHTML = '';
+      const progress = document.createElement('div');
+      progress.className = 'progress-line';
+      progress.innerHTML = '<span>Question ' + (idx+1) + ' of ' + bank.length + '</span><span>Score: ' + score + '</span>';
+      container.appendChild(progress);
+
+      const qEl = document.createElement('div');
+      qEl.className = 'q-text';
+      qEl.textContent = item.q;
+      container.appendChild(qEl);
+
+      const opts = document.createElement('div');
+      opts.className = 'options';
+      answered = false;
+      item.options.forEach((optText, i) => {
+        const b = document.createElement('button');
+        b.className = 'option';
+        b.textContent = optText;
+        b.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const correct = i === item.correct;
+          if (correct) score++;
+          Array.from(opts.children).forEach((child, ci) => {
+            child.disabled = true;
+            if (ci === item.correct) child.classList.add('correct');
+            else if (ci === i) child.classList.add('wrong');
+          });
+          const explain = document.createElement('div');
+          explain.className = 'explain';
+          explain.textContent = item.explain;
+          container.appendChild(explain);
+
+          const actions = document.createElement('div');
+          actions.className = 'quiz-actions';
+          if (idx < bank.length - 1) {
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn' + (key === 'architecture' ? ' blue' : '');
+            nextBtn.textContent = 'Next question';
+            nextBtn.addEventListener('click', () => { idx++; renderQuestion(); });
+            actions.appendChild(nextBtn);
+          } else {
+            const finishBtn = document.createElement('button');
+            finishBtn.className = 'btn' + (key === 'architecture' ? ' blue' : '');
+            finishBtn.textContent = 'See final score';
+            finishBtn.addEventListener('click', () => renderScore());
+            actions.appendChild(finishBtn);
+          }
+          const askBtn = document.createElement('button');
+          askBtn.className = 'btn ghost';
+          askBtn.textContent = key === 'architecture' ? 'Ask the mentor more' : 'Ask the tutor more';
+          askBtn.addEventListener('click', () => onAskMore(item.q));
+          actions.appendChild(askBtn);
+          container.appendChild(actions);
+        });
+        opts.appendChild(b);
+      });
+      container.appendChild(opts);
+    }
+
+    function renderScore(){
+      const pct = Math.round((score / bank.length) * 100);
+      const best = state.quizBest[key] || 0;
+      if (pct > best) { state.quizBest[key] = pct; saveState(); }
+      container.innerHTML =
+        '<div class="score-screen">' +
+          '<div class="big">' + score + ' / ' + bank.length + '</div>' +
+          '<p class="muted">' + pct + '% correct · best so far: ' + Math.max(pct, best) + '%</p>' +
+          '<button class="btn' + (key === 'architecture' ? ' blue' : '') + '" id="restart-' + key + '">Try again with new order</button>' +
+        '</div>';
+      document.getElementById('restart-' + key).addEventListener('click', () => {
+        order = shuffledIndices(bank.length); idx = 0; score = 0; renderQuestion();
+      });
+    }
+
+    renderQuestion();
+  }
+
+  makeQuizController({ key: 'english', container: document.getElementById('englishQuizBody'), bank: ENGLISH_QUIZ, onAskMore: jumpToTutorWith });
+  makeQuizController({ key: 'architecture', container: document.getElementById('archQuizBody'), bank: ARCH_QUIZ, onAskMore: jumpToMentorWith });
+
+  /* ===================================================================
+     ROADMAP
+  =================================================================== */
+  const ROADMAP = [
+    { id: "http", title: "HTTP & REST fundamentals", note: "Methods, status codes, headers — the language every API speaks." },
+    { id: "db", title: "Databases: SQL vs NoSQL", note: "When to reach for tables and joins vs documents and key-value stores." },
+    { id: "api-design", title: "API design", note: "Designing endpoints, request/response shapes, versioning, pagination." },
+    { id: "auth", title: "Authentication & authorization", note: "Sessions, tokens (JWT), OAuth — who you are vs what you can do." },
+    { id: "caching", title: "Caching strategies", note: "In-memory caches, CDNs, cache invalidation — the classic hard problem." },
+    { id: "queues", title: "Message queues & async processing", note: "Decoupling work with queues instead of doing everything synchronously." },
+    { id: "monolith-micro", title: "Monolith vs microservices", note: "Trade-offs in splitting an app into independently deployed services." },
+    { id: "scaling", title: "Scalability & load balancing", note: "Horizontal vs vertical scaling, load balancers, stateless services." },
+    { id: "system-design", title: "System design basics", note: "Sketching a design for something like a URL shortener or a feed." },
+    { id: "containers", title: "Containers & Docker", note: "Packaging an app so it runs the same everywhere." },
+    { id: "cicd", title: "CI/CD pipelines", note: "Automating tests and deployments so releases aren't scary." },
+    { id: "observability", title: "Observability: logs, metrics, tracing", note: "Knowing what your backend is actually doing in production." }
+  ];
+
+  function renderRoadmap(){
+    const list = document.getElementById('roadmapList');
+    list.innerHTML = '';
+    ROADMAP.forEach((topic, i) => {
+      const done = !!state.roadmapDone[topic.id];
+      const row = document.createElement('div');
+      row.className = 'topic' + (done ? ' done' : '');
+      row.innerHTML =
+        '<button class="check-btn" aria-label="Mark ' + topic.title + ' as ' + (done ? 'not done' : 'done') + '">' +
+          '<span class="num">' + (i + 1) + '</span>' +
+          '<svg viewBox="0 0 24 24"><polyline points="4,13 9,18 20,6"></polyline></svg>' +
+        '</button>' +
+        '<div class="topic-body">' +
+          '<h3>' + topic.title + '</h3>' +
+          '<p>' + topic.note + '</p>' +
+          '<button class="ask-link">Ask the mentor about this →</button>' +
+        '</div>';
+      row.querySelector('.check-btn').addEventListener('click', () => {
+        state.roadmapDone[topic.id] = !state.roadmapDone[topic.id];
+        saveState();
+        renderRoadmap();
+      });
+      row.querySelector('.ask-link').addEventListener('click', () => {
+        jumpToMentorWith("Can you explain \"" + topic.title + "\" in simple, practical terms, and how it connects to what a frontend developer already knows?");
+      });
+      list.appendChild(row);
+    });
+    const doneCount = ROADMAP.filter(t => state.roadmapDone[t.id]).length;
+    document.getElementById('roadmapProgressLabel').textContent = doneCount + ' / ' + ROADMAP.length + ' topics';
+    document.getElementById('roadmapProgressBar').style.width = Math.round((doneCount / ROADMAP.length) * 100) + '%';
+  }
+
+  /* ---------- init ---------- */
+  renderVocab();
+  renderRoadmap();
+  initSample();
+  loadRemote();
+})();
+</script>
+</body>
+</html>

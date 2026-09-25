@@ -1,75 +1,81 @@
-# React + TypeScript + Vite
+# Tabla
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A two-sided learning app:
 
-Currently, two official plugins are available:
+- **English** — AI chat tutor, vocabulary flashcards, grammar quiz
+- **Architecture** — backend learning roadmap, AI mentor chat, quiz
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Built with React + TypeScript (Vite). Supabase (Postgres, Auth, Edge Functions)
+comes in from Phase 1 onwards — see [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md).
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Node.js** `^20.19.0` or `>=22.12.0` (required by Vite 8) — check with `node -v`
+- **npm** (comes with Node)
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+git clone <repo-url> tabla-app
+cd tabla-app
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Then open the URL Vite prints (usually http://localhost:5173). Edits to files
+in `src/` reload in the browser automatically.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+No environment variables are needed yet. Once Supabase is wired up (Phase 2),
+the project URL and anon key will go in a `.env.local` file — setup steps will
+be added here then.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Scripts
+
+| Command           | What it does                                              |
+| ----------------- | --------------------------------------------------------- |
+| `npm run dev`     | Start the dev server with hot reload                      |
+| `npm run build`   | Type-check (`tsc -b`) and build for production to `dist/` |
+| `npm run preview` | Serve the production build locally to check it            |
+| `npm run lint`    | Run ESLint over the project                               |
+
+`npm run build` fails on any TypeScript error — the project uses
+`"strict": true`, so run it (or `npx tsc -b`) before committing.
+
+## Project structure
 
 ```
+index.html          # page shell, Google Fonts links
+src/
+  main.tsx          # React entry point
+  App.tsx           # root component
+  index.css         # all styles, ported from the original HTML version
+  types.ts          # shared interfaces (VocabWord, QuizQuestion, RoadmapTopic, ChatMessage)
+  data/             # hardcoded content: vocab, roadmap topics, quizzes, AI system prompts
+legacy/
+  tabla.html        # the original single-file version — reference for the port
+```
+
+Components (`src/components/`) and data hooks (`src/hooks/`) are added as
+Phase 0 progresses; the target layout is in [`CLAUDE.md`](CLAUDE.md).
+
+## Viewing the original version
+
+`legacy/tabla.html` is the pre-React app. Open it directly in a browser to
+compare behavior while porting. Its AI chat only works inside Claude (it used
+the artifact `sample` capability), so outside Claude the chat shows a fallback
+message.
+
+## Status
+
+| Phase | Description                         | Status      |
+| ----- | ----------------------------------- | ----------- |
+| 0     | React + TypeScript scaffold         | In progress |
+| 1     | Supabase project setup              | Not started |
+| 2     | Wire the frontend to Supabase       | Not started |
+| 3     | AI tutor + mentor via Edge Function | Not started |
+| 4     | Fix quiz repetition                 | Not started |
+| 5     | Writing practice                    | Not started |
+| 6     | Spaced repetition for vocabulary    | Not started |
+| 7     | Deploy                              | Not started |
+
+Details for each phase are in [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md).
