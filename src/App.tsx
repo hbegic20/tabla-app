@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import MainTabs from './components/MainTabs'
 import SubTabs, { type SubTabOption } from './components/SubTabs'
+import Vocabulary from './components/english/Vocabulary'
+import Roadmap from './components/architecture/Roadmap'
 import { useTheme } from './hooks/useTheme'
+import { VOCAB_WORDS } from './data/vocab'
+import { ROADMAP_TOPICS } from './data/roadmap'
 import type { ArchSubTab, EnglishSubTab, MainTab } from './types'
 
 const ENGLISH_TABS: SubTabOption<EnglishSubTab>[] = [
@@ -32,6 +36,11 @@ function App() {
     document.body.classList.toggle('side-architecture', mainTab === 'architecture')
   }, [mainTab])
 
+  function openMentor() {
+    setMainTab('architecture')
+    setArchTab('mentor')
+  }
+
   return (
     <div className="wrap">
       <Header isDark={isDark} onToggleTheme={toggleTheme} />
@@ -39,20 +48,28 @@ function App() {
 
       <section id="english-view" className={visibleIf(mainTab === 'english')}>
         <SubTabs tabs={ENGLISH_TABS} active={englishTab} onChange={setEnglishTab} />
-        {ENGLISH_TABS.map((tab) => (
-          <div key={tab.id} className={visibleIf(englishTab === tab.id, 'panel')}>
-            <p className="empty-hint">{tab.label} — coming next</p>
-          </div>
-        ))}
+        <div className={visibleIf(englishTab === 'chat', 'panel')}>
+          <p className="empty-hint">Chat with tutor — coming next</p>
+        </div>
+        <div className={visibleIf(englishTab === 'vocab', 'panel')}>
+          <Vocabulary words={VOCAB_WORDS} />
+        </div>
+        <div className={visibleIf(englishTab === 'quiz', 'panel')}>
+          <p className="empty-hint">Grammar quiz — coming next</p>
+        </div>
       </section>
 
       <section id="architecture-view" className={visibleIf(mainTab === 'architecture')}>
         <SubTabs tabs={ARCH_TABS} active={archTab} onChange={setArchTab} />
-        {ARCH_TABS.map((tab) => (
-          <div key={tab.id} className={visibleIf(archTab === tab.id, 'panel')}>
-            <p className="empty-hint">{tab.label} — coming next</p>
-          </div>
-        ))}
+        <div className={visibleIf(archTab === 'roadmap', 'panel')}>
+          <Roadmap topics={ROADMAP_TOPICS} onAskMentor={openMentor} />
+        </div>
+        <div className={visibleIf(archTab === 'mentor', 'panel')}>
+          <p className="empty-hint">Ask a mentor — coming next</p>
+        </div>
+        <div className={visibleIf(archTab === 'quiz', 'panel')}>
+          <p className="empty-hint">Quiz — coming next</p>
+        </div>
       </section>
     </div>
   )
