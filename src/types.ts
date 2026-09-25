@@ -21,3 +21,11 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
 }
+
+export type Theme = 'light' | 'dark'
+
+export type MainTab = 'english' | 'architecture'
+
+export type EnglishSubTab = 'chat' | 'vocab' | 'quiz'
+
+export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
