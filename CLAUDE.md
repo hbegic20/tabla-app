@@ -91,6 +91,9 @@ tabla-app/                   # repo root = Vite project root
 - **Strict TypeScript** — no `any` without a comment explaining why it's
   unavoidable; prefer explicit interfaces over inferred shapes for anything
   crossing a component boundary or coming back from Supabase
+- **No code comments** — don't add comments (including JSDoc) to code you
+  write; explanations go in the chat, not the source. The one exception is
+  the required justification on an unavoidable `any` (see above)
 - **Function components + hooks only** — no class components
 - **One hook per data domain** (`useRoadmap`, `useVocab`, `useQuiz`, `useAuth`)
   encapsulating its own Supabase calls and loading/error state, so components
