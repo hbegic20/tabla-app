@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import MainTabs from './components/MainTabs'
 import SubTabs, { type SubTabOption } from './components/SubTabs'
+import ChatPanel from './components/ChatPanel'
 import QuizEngine from './components/QuizEngine'
 import Vocabulary from './components/english/Vocabulary'
 import Roadmap from './components/architecture/Roadmap'
+import { useChat } from './hooks/useChat'
 import { useTheme } from './hooks/useTheme'
 import { VOCAB_WORDS } from './data/vocab'
 import { ROADMAP_TOPICS } from './data/roadmap'
@@ -32,20 +34,24 @@ function App() {
   const [mainTab, setMainTab] = useState<MainTab>('english')
   const [englishTab, setEnglishTab] = useState<EnglishSubTab>('chat')
   const [archTab, setArchTab] = useState<ArchSubTab>('roadmap')
+  const tutorChat = useChat('tutor')
+  const mentorChat = useChat('mentor')
 
   useEffect(() => {
     document.body.classList.toggle('side-english', mainTab === 'english')
     document.body.classList.toggle('side-architecture', mainTab === 'architecture')
   }, [mainTab])
 
-  function openTutor() {
+  function askTutor(question: string) {
     setMainTab('english')
     setEnglishTab('chat')
+    tutorChat.send(question)
   }
 
-  function openMentor() {
+  function askMentor(question: string) {
     setMainTab('architecture')
     setArchTab('mentor')
+    mentorChat.send(question)
   }
 
   return (
@@ -56,26 +62,26 @@ function App() {
       <section id="english-view" className={visibleIf(mainTab === 'english')}>
         <SubTabs tabs={ENGLISH_TABS} active={englishTab} onChange={setEnglishTab} />
         <div className={visibleIf(englishTab === 'chat', 'panel')}>
-          <p className="empty-hint">Chat with tutor — coming next</p>
+          <ChatPanel side="english" messages={tutorChat.messages} onSend={tutorChat.send} />
         </div>
         <div className={visibleIf(englishTab === 'vocab', 'panel')}>
           <Vocabulary words={VOCAB_WORDS} />
         </div>
         <div className={visibleIf(englishTab === 'quiz', 'panel')}>
-          <QuizEngine questions={ENGLISH_QUIZ} side="english" onAskMore={openTutor} />
+          <QuizEngine questions={ENGLISH_QUIZ} side="english" onAskMore={askTutor} />
         </div>
       </section>
 
       <section id="architecture-view" className={visibleIf(mainTab === 'architecture')}>
         <SubTabs tabs={ARCH_TABS} active={archTab} onChange={setArchTab} />
         <div className={visibleIf(archTab === 'roadmap', 'panel')}>
-          <Roadmap topics={ROADMAP_TOPICS} onAskMentor={openMentor} />
+          <Roadmap topics={ROADMAP_TOPICS} onAskMentor={askMentor} />
         </div>
         <div className={visibleIf(archTab === 'mentor', 'panel')}>
-          <p className="empty-hint">Ask a mentor — coming next</p>
+          <ChatPanel side="architecture" messages={mentorChat.messages} onSend={mentorChat.send} />
         </div>
         <div className={visibleIf(archTab === 'quiz', 'panel')}>
-          <QuizEngine questions={ARCH_QUIZ} side="architecture" onAskMore={openMentor} />
+          <QuizEngine questions={ARCH_QUIZ} side="architecture" onAskMore={askMentor} />
         </div>
       </section>
     </div>

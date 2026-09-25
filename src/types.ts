@@ -29,3 +29,5 @@ export type MainTab = 'english' | 'architecture'
 export type EnglishSubTab = 'chat' | 'vocab' | 'quiz'
 
 export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
+
+export type ChatMode = 'tutor' | 'mentor'

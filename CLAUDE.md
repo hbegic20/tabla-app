@@ -65,6 +65,7 @@ tabla-app/                   # repo root = Vite project root
       supabase.ts              # typed Supabase client
     hooks/
       useTheme.ts
+      useChat.ts               # tutor/mentor conversation; calls ai-chat from Phase 3
       useAuth.ts
       useRoadmap.ts
       useVocab.ts
@@ -74,13 +75,12 @@ tabla-app/                   # repo root = Vite project root
       MainTabs.tsx
       SubTabs.tsx              # generic pill sub-tabs
       QuizEngine.tsx           # shared by the grammar + architecture quizzes
+      ChatPanel.tsx            # shared by the tutor + mentor chats
       english/
-        ChatTutor.tsx
         Vocabulary.tsx
         WritingPractice.tsx
       architecture/
         Roadmap.tsx
-        MentorChat.tsx
   supabase/
     functions/
       ai-chat/
