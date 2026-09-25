@@ -60,9 +60,11 @@ tabla-app/                   # repo root = Vite project root
     App.tsx
     index.css                  # ported from the original vanilla version
     types.ts                   # shared interfaces (VocabWord, QuizQuestion, etc.)
+    data/                      # hardcoded content (vocab, roadmap, quizzes, prompts) until Supabase
     lib/
       supabase.ts              # typed Supabase client
     hooks/
+      useTheme.ts
       useAuth.ts
       useRoadmap.ts
       useVocab.ts
@@ -70,15 +72,15 @@ tabla-app/                   # repo root = Vite project root
     components/
       Header.tsx
       MainTabs.tsx
+      SubTabs.tsx              # generic pill sub-tabs
+      QuizEngine.tsx           # shared by the grammar + architecture quizzes
       english/
         ChatTutor.tsx
         Vocabulary.tsx
-        GrammarQuiz.tsx
         WritingPractice.tsx
       architecture/
         Roadmap.tsx
         MentorChat.tsx
-        ArchQuiz.tsx
   supabase/
     functions/
       ai-chat/

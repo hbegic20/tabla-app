@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import MainTabs from './components/MainTabs'
 import SubTabs, { type SubTabOption } from './components/SubTabs'
+import QuizEngine from './components/QuizEngine'
 import Vocabulary from './components/english/Vocabulary'
 import Roadmap from './components/architecture/Roadmap'
 import { useTheme } from './hooks/useTheme'
 import { VOCAB_WORDS } from './data/vocab'
 import { ROADMAP_TOPICS } from './data/roadmap'
+import { ARCH_QUIZ, ENGLISH_QUIZ } from './data/quizzes'
 import type { ArchSubTab, EnglishSubTab, MainTab } from './types'
 
 const ENGLISH_TABS: SubTabOption<EnglishSubTab>[] = [
@@ -36,6 +38,11 @@ function App() {
     document.body.classList.toggle('side-architecture', mainTab === 'architecture')
   }, [mainTab])
 
+  function openTutor() {
+    setMainTab('english')
+    setEnglishTab('chat')
+  }
+
   function openMentor() {
     setMainTab('architecture')
     setArchTab('mentor')
@@ -55,7 +62,7 @@ function App() {
           <Vocabulary words={VOCAB_WORDS} />
         </div>
         <div className={visibleIf(englishTab === 'quiz', 'panel')}>
-          <p className="empty-hint">Grammar quiz — coming next</p>
+          <QuizEngine questions={ENGLISH_QUIZ} side="english" onAskMore={openTutor} />
         </div>
       </section>
 
@@ -68,7 +75,7 @@ function App() {
           <p className="empty-hint">Ask a mentor — coming next</p>
         </div>
         <div className={visibleIf(archTab === 'quiz', 'panel')}>
-          <p className="empty-hint">Quiz — coming next</p>
+          <QuizEngine questions={ARCH_QUIZ} side="architecture" onAskMore={openMentor} />
         </div>
       </section>
     </div>
