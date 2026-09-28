@@ -19,15 +19,41 @@ comes in from Phase 1 onwards — see [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md).
 git clone <repo-url> tabla-app
 cd tabla-app
 npm install
+cp .env.example .env.local   # then fill in the two values
 npm run dev
 ```
 
 Then open the URL Vite prints (usually http://localhost:5173). Edits to files
 in `src/` reload in the browser automatically.
 
-No environment variables are needed yet. Once Supabase is wired up (Phase 2),
-the project URL and anon key will go in a `.env.local` file — setup steps will
-be added here then.
+### Environment variables
+
+`.env.local` (gitignored) needs two values from the Supabase dashboard
+(**Project Settings → API**, or the **Connect** button):
+
+| Variable                        | Value                                          |
+| ------------------------------- | ---------------------------------------------- |
+| `VITE_SUPABASE_URL`             | `https://<project-ref>.supabase.co`            |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | the publishable (`sb_publishable_…`) / anon key |
+
+Both are safe in the browser — Row Level Security is what protects the data.
+**Never** put the secret / `service_role` key here. Vite only exposes
+variables prefixed with `VITE_`; restart `npm run dev` after editing the file.
+
+### Database (Supabase)
+
+The schema lives in `supabase/migrations/` and is applied with the Supabase
+CLI (installed as a dev dependency):
+
+```bash
+npx supabase login
+npx supabase link --project-ref <project-ref>
+npx supabase db push          # apply new migrations to the remote database
+npm run types:db              # regenerate src/lib/database.types.ts
+```
+
+Run `npm run types:db` after every schema change so TypeScript matches the
+database.
 
 ## Scripts
 
@@ -37,6 +63,7 @@ be added here then.
 | `npm run build`   | Type-check (`tsc -b`) and build for production to `dist/` |
 | `npm run preview` | Serve the production build locally to check it            |
 | `npm run lint`    | Run ESLint over the project                               |
+| `npm run types:db` | Regenerate Supabase types into `src/lib/database.types.ts` |
 
 `npm run build` fails on any TypeScript error — the project uses
 `"strict": true`, so run it (or `npx tsc -b`) before committing.
@@ -53,6 +80,9 @@ src/
   data/             # hardcoded content: vocab, roadmap topics, quizzes, AI system prompts
   components/       # Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
   hooks/            # useTheme, useChat
+  lib/              # Supabase client + generated database types
+supabase/
+  migrations/       # schema, RLS policies, seed data (SQL)
 legacy/
   tabla.html        # the original single-file version — reference for the port
 ```
@@ -71,7 +101,7 @@ message.
 | Phase | Description                         | Status      |
 | ----- | ----------------------------------- | ----------- |
 | 0     | React + TypeScript scaffold         | ✅ Done      |
-| 1     | Supabase project setup              | Not started |
+| 1     | Supabase project setup              | ✅ Done      |
 | 2     | Wire the frontend to Supabase       | Not started |
 | 3     | AI tutor + mentor via Edge Function | Not started |
 | 4     | Fix quiz repetition                 | Not started |

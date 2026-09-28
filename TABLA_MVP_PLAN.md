@@ -51,7 +51,9 @@
 
 - Every feature (chat UI shell, flashcard flip, quiz flow, roadmap checklist, theme toggle) should visibly work exactly as it did in the HTML version — just without persistence yet, since that's what Phase 1+ adds back in with Supabase
 
-## Phase 1 — Supabase project setup
+## Phase 1 — Supabase project setup — ✅ Done 2026-09-28
+
+**Outcome:** schema, RLS and seed data live in `supabase/migrations/` and are pushed with `supabase db push` (not created in the Table Editor). Deviations: `quiz_attempts` and `writing_entries` are append-only (select/insert policies, no update); `vocab_progress.last_result` is constrained to `'known'`/`'unknown'`; `roadmap_progress.updated_at` is maintained by a trigger. Email/password Auth enabled.
 
 **Create the project**
 
