@@ -51,12 +51,13 @@ src/
   index.css         # all styles, ported from the original HTML version
   types.ts          # shared interfaces (VocabWord, QuizQuestion, RoadmapTopic, ChatMessage)
   data/             # hardcoded content: vocab, roadmap topics, quizzes, AI system prompts
+  components/       # Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
+  hooks/            # useTheme, useChat
 legacy/
   tabla.html        # the original single-file version — reference for the port
 ```
 
-Components (`src/components/`) and data hooks (`src/hooks/`) are added as
-Phase 0 progresses; the target layout is in [`CLAUDE.md`](CLAUDE.md).
+The full target layout (including Supabase) is in [`CLAUDE.md`](CLAUDE.md).
 
 ## Viewing the original version
 
@@ -69,7 +70,7 @@ message.
 
 | Phase | Description                         | Status      |
 | ----- | ----------------------------------- | ----------- |
-| 0     | React + TypeScript scaffold         | In progress |
+| 0     | React + TypeScript scaffold         | ✅ Done      |
 | 1     | Supabase project setup              | Not started |
 | 2     | Wire the frontend to Supabase       | Not started |
 | 3     | AI tutor + mentor via Edge Function | Not started |

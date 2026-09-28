@@ -14,7 +14,9 @@
 
 **Approach:** ship Phases 1–4 first — that's "Tabla works for real, with accounts." Only then add Phases 5–6 (the two new features). Get each phase actually working before starting the next; don't parallelize them.
 
-## Phase 0 — React + TypeScript scaffold (do this first)
+## Phase 0 — React + TypeScript scaffold (do this first) — ✅ Done 2026-09-25
+
+**Outcome:** feature parity confirmed against `legacy/tabla.html`. Deviations from the steps below: the quizzes share one `QuizEngine.tsx` and the chats share one `ChatPanel.tsx` + `useChat` hook (instead of separate GrammarQuiz/ArchQuiz/ChatTutor/MentorChat files); content lives in `src/data/`; tab and chat state are lifted into `App` so roadmap/quiz "ask" links can open a chat; AI chat returns a fixed "not connected" reply until Phase 3.
 
 **Decision:** the frontend is being rewritten in React + TypeScript before any Supabase work starts. This phase only ports the existing UI and behavior into components — no backend changes yet, no Supabase calls yet. Data stays local/in-memory for now, same as the current demo; Phases 1–7 below replace that local state with real Supabase calls once this scaffold exists.
 
