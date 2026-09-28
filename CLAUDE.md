@@ -60,7 +60,7 @@ tabla-app/                   # repo root = Vite project root
     App.tsx
     index.css                  # ported from the original vanilla version
     types.ts                   # shared interfaces (VocabWord, QuizQuestion, etc.)
-    data/                      # hardcoded content (vocab, roadmap, quizzes, prompts) until Supabase
+    data/                      # content not yet in Supabase (vocab, prompts); removed as hooks replace it
     lib/
       supabase.ts              # typed Supabase client
     hooks/

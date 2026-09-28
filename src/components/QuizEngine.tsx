@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { percent } from '../hooks/useQuiz'
 import type { MainTab, QuizQuestion } from '../types'
 
 interface QuizEngineProps {
   questions: QuizQuestion[]
+  best: number | null
   side: MainTab
+  onFinish: (score: number, total: number) => void
   onAskMore: (question: string) => void
 }
 
@@ -18,13 +21,12 @@ function shuffledOrder(n: number): number[] {
   return order
 }
 
-function QuizEngine({ questions, side, onAskMore }: QuizEngineProps) {
+function QuizEngine({ questions, best, side, onFinish, onAskMore }: QuizEngineProps) {
   const [order, setOrder] = useState(() => shuffledOrder(questions.length))
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const [finished, setFinished] = useState(false)
-  const [best, setBest] = useState(0)
 
   const total = questions.length
   const btnClass = side === 'architecture' ? 'btn blue' : 'btn'
@@ -39,7 +41,7 @@ function QuizEngine({ questions, side, onAskMore }: QuizEngineProps) {
   }
 
   function finish() {
-    setBest((b) => Math.max(b, Math.round((score / total) * 100)))
+    onFinish(score, total)
     setFinished(true)
   }
 
@@ -52,14 +54,14 @@ function QuizEngine({ questions, side, onAskMore }: QuizEngineProps) {
   }
 
   if (finished) {
-    const pct = Math.round((score / total) * 100)
+    const pct = percent(score, total)
     return (
       <div className="score-screen">
         <div className="big">
           {score} / {total}
         </div>
         <p className="muted">
-          {pct}% correct · best so far: {best}%
+          {pct}% correct · best so far: {Math.max(best ?? 0, pct)}%
         </p>
         <button type="button" className={btnClass} onClick={restart}>
           Try again with new order

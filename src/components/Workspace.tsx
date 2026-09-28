@@ -7,9 +7,9 @@ import QuizEngine from './QuizEngine'
 import Vocabulary from './english/Vocabulary'
 import Roadmap from './architecture/Roadmap'
 import { useChat } from '../hooks/useChat'
+import { useQuiz } from '../hooks/useQuiz'
 import { useRoadmap } from '../hooks/useRoadmap'
 import { VOCAB_WORDS } from '../data/vocab'
-import { ARCH_QUIZ, ENGLISH_QUIZ } from '../data/quizzes'
 import type { ArchSubTab, EnglishSubTab, MainTab } from '../types'
 
 const ENGLISH_TABS: SubTabOption<EnglishSubTab>[] = [
@@ -42,6 +42,8 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
   const tutorChat = useChat('tutor')
   const mentorChat = useChat('mentor')
   const roadmap = useRoadmap(userId)
+  const englishQuiz = useQuiz('english')
+  const archQuiz = useQuiz('architecture')
 
   useEffect(() => {
     document.body.classList.toggle('side-english', mainTab === 'english')
@@ -74,7 +76,18 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
           <Vocabulary words={VOCAB_WORDS} />
         </div>
         <div className={visibleIf(englishTab === 'quiz', 'panel')}>
-          <QuizEngine questions={ENGLISH_QUIZ} side="english" onAskMore={askTutor} />
+          {englishQuiz.loading ? (
+            <p className="empty-hint">Loading quiz…</p>
+          ) : (
+            <QuizEngine
+              questions={englishQuiz.questions}
+              best={englishQuiz.best}
+              side="english"
+              onFinish={englishQuiz.recordAttempt}
+              onAskMore={askTutor}
+            />
+          )}
+          {englishQuiz.error && <p className="error-text">{englishQuiz.error}</p>}
         </div>
       </section>
 
@@ -97,7 +110,18 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
           <ChatPanel side="architecture" messages={mentorChat.messages} onSend={mentorChat.send} />
         </div>
         <div className={visibleIf(archTab === 'quiz', 'panel')}>
-          <QuizEngine questions={ARCH_QUIZ} side="architecture" onAskMore={askMentor} />
+          {archQuiz.loading ? (
+            <p className="empty-hint">Loading quiz…</p>
+          ) : (
+            <QuizEngine
+              questions={archQuiz.questions}
+              best={archQuiz.best}
+              side="architecture"
+              onFinish={archQuiz.recordAttempt}
+              onAskMore={askMentor}
+            />
+          )}
+          {archQuiz.error && <p className="error-text">{archQuiz.error}</p>}
         </div>
       </section>
     </div>

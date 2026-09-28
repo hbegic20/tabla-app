@@ -5,6 +5,7 @@ export interface VocabWord {
 }
 
 export interface QuizQuestion {
+  id: number
   q: string
   options: string[]
   correct: number
@@ -31,3 +32,5 @@ export type EnglishSubTab = 'chat' | 'vocab' | 'quiz'
 export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
 
 export type ChatMode = 'tutor' | 'mentor'
+
+export type QuizKey = 'english' | 'architecture'
