@@ -22,6 +22,7 @@ function App() {
   return (
     <Workspace
       key={session.user.id}
+      userId={session.user.id}
       isDark={isDark}
       onToggleTheme={toggleTheme}
       onSignOut={signOut}

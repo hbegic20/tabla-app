@@ -421,7 +421,7 @@ nav.sub-tabs button:not(.active):hover { border-color: var(--text); color: var(-
   font-size: 14px;
 }
 .auth-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.auth-error { margin: 0; font-size: 13.5px; color: var(--danger); }
+.error-text { margin: 0; font-size: 13.5px; color: var(--danger); }
 .auth-notice { margin: 0; font-size: 13.5px; color: var(--good); }
 .auth-switch-row { margin: 0; font-size: 13.5px; }
 .auth-switch {

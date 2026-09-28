@@ -7,8 +7,8 @@ import QuizEngine from './QuizEngine'
 import Vocabulary from './english/Vocabulary'
 import Roadmap from './architecture/Roadmap'
 import { useChat } from '../hooks/useChat'
+import { useRoadmap } from '../hooks/useRoadmap'
 import { VOCAB_WORDS } from '../data/vocab'
-import { ROADMAP_TOPICS } from '../data/roadmap'
 import { ARCH_QUIZ, ENGLISH_QUIZ } from '../data/quizzes'
 import type { ArchSubTab, EnglishSubTab, MainTab } from '../types'
 
@@ -29,17 +29,19 @@ function visibleIf(visible: boolean, className = '') {
 }
 
 interface WorkspaceProps {
+  userId: string
   isDark: boolean
   onToggleTheme: () => void
   onSignOut: () => void
 }
 
-function Workspace({ isDark, onToggleTheme, onSignOut }: WorkspaceProps) {
+function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps) {
   const [mainTab, setMainTab] = useState<MainTab>('english')
   const [englishTab, setEnglishTab] = useState<EnglishSubTab>('chat')
   const [archTab, setArchTab] = useState<ArchSubTab>('roadmap')
   const tutorChat = useChat('tutor')
   const mentorChat = useChat('mentor')
+  const roadmap = useRoadmap(userId)
 
   useEffect(() => {
     document.body.classList.toggle('side-english', mainTab === 'english')
@@ -79,7 +81,17 @@ function Workspace({ isDark, onToggleTheme, onSignOut }: WorkspaceProps) {
       <section id="architecture-view" className={visibleIf(mainTab === 'architecture')}>
         <SubTabs tabs={ARCH_TABS} active={archTab} onChange={setArchTab} />
         <div className={visibleIf(archTab === 'roadmap', 'panel')}>
-          <Roadmap topics={ROADMAP_TOPICS} onAskMentor={askMentor} />
+          {roadmap.loading ? (
+            <p className="empty-hint">Loading roadmap…</p>
+          ) : (
+            <Roadmap
+              topics={roadmap.topics}
+              done={roadmap.done}
+              onToggle={roadmap.toggle}
+              onAskMentor={askMentor}
+            />
+          )}
+          {roadmap.error && <p className="error-text">{roadmap.error}</p>}
         </div>
         <div className={visibleIf(archTab === 'mentor', 'panel')}>
           <ChatPanel side="architecture" messages={mentorChat.messages} onSend={mentorChat.send} />

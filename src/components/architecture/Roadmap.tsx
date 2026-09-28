@@ -1,23 +1,13 @@
-import { useState } from 'react'
 import type { RoadmapTopic } from '../../types'
 
 interface RoadmapProps {
   topics: RoadmapTopic[]
+  done: ReadonlySet<string>
+  onToggle: (id: string) => void
   onAskMentor: (question: string) => void
 }
 
-function Roadmap({ topics, onAskMentor }: RoadmapProps) {
-  const [done, setDone] = useState<Set<string>>(() => new Set())
-
-  function toggle(id: string) {
-    setDone((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
+function Roadmap({ topics, done, onToggle, onAskMentor }: RoadmapProps) {
   const doneCount = topics.filter((t) => done.has(t.id)).length
   const percent = topics.length ? Math.round((doneCount / topics.length) * 100) : 0
 
@@ -41,7 +31,7 @@ function Roadmap({ topics, onAskMentor }: RoadmapProps) {
                 type="button"
                 className="check-btn"
                 aria-label={`Mark ${topic.title} as ${isDone ? 'not done' : 'done'}`}
-                onClick={() => toggle(topic.id)}
+                onClick={() => onToggle(topic.id)}
               >
                 <span className="num">{i + 1}</span>
                 <svg viewBox="0 0 24 24">

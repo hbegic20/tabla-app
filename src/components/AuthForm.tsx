@@ -73,7 +73,7 @@ function AuthForm({ onSignIn, onSignUp }: AuthFormProps) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        {error && <p className="auth-error">{error}</p>}
+        {error && <p className="error-text">{error}</p>}
         {notice && <p className="auth-notice">{notice}</p>}
         <button type="submit" className="btn" disabled={pending}>
           {pending ? 'Please wait…' : isSignUp ? 'Sign up' : 'Sign in'}
