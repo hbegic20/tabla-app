@@ -77,7 +77,7 @@ src/
   App.tsx           # root component
   index.css         # all styles, ported from the original HTML version
   types.ts          # shared interfaces (VocabWord, QuizQuestion, RoadmapTopic, ChatMessage)
-  data/             # content not yet in Supabase: vocab words, AI system prompts
+  data/             # AI system prompts (move to the Edge Function in Phase 3)
   components/       # Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
   hooks/            # useTheme, useChat
   lib/              # Supabase client + generated database types

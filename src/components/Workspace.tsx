@@ -9,7 +9,7 @@ import Roadmap from './architecture/Roadmap'
 import { useChat } from '../hooks/useChat'
 import { useQuiz } from '../hooks/useQuiz'
 import { useRoadmap } from '../hooks/useRoadmap'
-import { VOCAB_WORDS } from '../data/vocab'
+import { useVocab } from '../hooks/useVocab'
 import type { ArchSubTab, EnglishSubTab, MainTab } from '../types'
 
 const ENGLISH_TABS: SubTabOption<EnglishSubTab>[] = [
@@ -42,6 +42,7 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
   const tutorChat = useChat('tutor')
   const mentorChat = useChat('mentor')
   const roadmap = useRoadmap(userId)
+  const vocab = useVocab(userId)
   const englishQuiz = useQuiz('english')
   const archQuiz = useQuiz('architecture')
 
@@ -73,7 +74,12 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
           <ChatPanel side="english" messages={tutorChat.messages} onSend={tutorChat.send} />
         </div>
         <div className={visibleIf(englishTab === 'vocab', 'panel')}>
-          <Vocabulary words={VOCAB_WORDS} />
+          {vocab.loading ? (
+            <p className="empty-hint">Loading vocabulary…</p>
+          ) : (
+            <Vocabulary words={vocab.words} results={vocab.results} onMark={vocab.mark} />
+          )}
+          {vocab.error && <p className="error-text">{vocab.error}</p>}
         </div>
         <div className={visibleIf(englishTab === 'quiz', 'panel')}>
           {englishQuiz.loading ? (

@@ -293,9 +293,9 @@ nav.sub-tabs button:not(.active):hover { border-color: var(--text); color: var(-
   gap: 12px;
 }
 .flip-card { perspective: 900px; height: 122px; cursor: pointer; }
-.flip-card:nth-child(3n+1) { transform: rotate(-0.6deg); }
-.flip-card:nth-child(3n+2) { transform: rotate(0.5deg); }
-.flip-card:nth-child(3n) { transform: rotate(-0.3deg); }
+.card-grid > :nth-child(3n+1) { transform: rotate(-0.6deg); }
+.card-grid > :nth-child(3n+2) { transform: rotate(0.5deg); }
+.card-grid > :nth-child(3n) { transform: rotate(-0.3deg); }
 .flip-inner {
   position: relative; width: 100%; height: 100%;
   transition: transform .5s cubic-bezier(.4,.2,.2,1);
@@ -429,3 +429,22 @@ nav.sub-tabs button:not(.active):hover { border-color: var(--text); color: var(-
   color: var(--accent2); font-family: inherit; font-size: inherit; font-weight: 600;
 }
 .auth-switch:hover { text-decoration: underline; }
+
+.vocab-item { display: flex; flex-direction: column; gap: 6px; }
+.vocab-actions { display: flex; gap: 6px; }
+.vocab-mark {
+  flex: 1;
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.vocab-mark:hover { color: var(--text); border-color: var(--text); }
+.vocab-mark.known.active { background: var(--good); border-color: var(--good); color: var(--bg); }
+.vocab-mark.unknown.active { background: var(--danger); border-color: var(--danger); color: var(--bg); }

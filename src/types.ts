@@ -1,4 +1,5 @@
 export interface VocabWord {
+  id: number
   en: string
   bs: string
   example: string
@@ -34,3 +35,5 @@ export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
 export type ChatMode = 'tutor' | 'mentor'
 
 export type QuizKey = 'english' | 'architecture'
+
+export type VocabResult = 'known' | 'unknown'
