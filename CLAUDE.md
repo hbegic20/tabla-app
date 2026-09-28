@@ -71,6 +71,8 @@ tabla-app/                   # repo root = Vite project root
       useVocab.ts
       useQuiz.ts
     components/
+      AuthForm.tsx             # sign in / sign up, shown when logged out
+      Workspace.tsx            # the logged-in app: tabs, panels, chat state
       Header.tsx
       MainTabs.tsx
       SubTabs.tsx              # generic pill sub-tabs
