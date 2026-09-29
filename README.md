@@ -94,8 +94,8 @@ src/
   index.css         # all styles, ported from the original HTML version
   types.ts          # shared interfaces (VocabWord, QuizQuestion, RoadmapTopic, ChatMessage)
   components/       # AuthForm, Workspace, Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
-  hooks/            # useAuth, useTheme, useChat, useRoadmap, useQuiz, useVocab
-  lib/              # Supabase client + generated database types
+  hooks/            # useAuth, useTheme, useChat, useRoadmap, useQuiz, useVocab, useWriting
+  lib/              # Supabase client, generated DB types, askAi, pure quiz/vocab logic
 supabase/
   migrations/       # schema, RLS policies, seed data (SQL)
   functions/ai-chat # Edge Function: auth, daily quota, Claude API call
@@ -120,7 +120,7 @@ message.
 | 1     | Supabase project setup              | ✅ Done      |
 | 2     | Wire the frontend to Supabase       | ✅ Done      |
 | 3     | AI tutor + mentor via Edge Function | 🟡 Deployed, API key pending |
-| 4     | Fix quiz repetition                 | Not started |
+| 4     | Fix quiz repetition                 | ✅ Done      |
 | 5     | Writing practice                    | Not started |
 | 6     | Spaced repetition for vocabulary    | Not started |
 | 7     | Deploy                              | Not started |

@@ -5,17 +5,20 @@ import SubTabs, { type SubTabOption } from './SubTabs'
 import ChatPanel from './ChatPanel'
 import QuizEngine from './QuizEngine'
 import Vocabulary from './english/Vocabulary'
+import WritingPractice from './english/WritingPractice'
 import Roadmap from './architecture/Roadmap'
 import { useChat } from '../hooks/useChat'
 import { useQuiz } from '../hooks/useQuiz'
 import { useRoadmap } from '../hooks/useRoadmap'
 import { useVocab } from '../hooks/useVocab'
+import { useWriting } from '../hooks/useWriting'
 import type { ArchSubTab, EnglishSubTab, MainTab } from '../types'
 
 const ENGLISH_TABS: SubTabOption<EnglishSubTab>[] = [
   { id: 'chat', label: 'Chat with tutor' },
   { id: 'vocab', label: 'Vocabulary' },
   { id: 'quiz', label: 'Grammar quiz' },
+  { id: 'writing', label: 'Writing' },
 ]
 
 const ARCH_TABS: SubTabOption<ArchSubTab>[] = [
@@ -43,6 +46,7 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
   const mentorChat = useChat('mentor')
   const roadmap = useRoadmap(userId)
   const vocab = useVocab(userId)
+  const writing = useWriting()
   const englishQuiz = useQuiz('english', userId)
   const archQuiz = useQuiz('architecture', userId)
 
@@ -83,7 +87,13 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
           {vocab.loading ? (
             <p className="empty-hint">Loading vocabulary…</p>
           ) : (
-            <Vocabulary words={vocab.words} results={vocab.results} onMark={vocab.mark} />
+            <Vocabulary
+              due={vocab.due}
+              progress={vocab.progress}
+              totalWords={vocab.totalWords}
+              nextReviewAt={vocab.nextReviewAt}
+              onMark={vocab.mark}
+            />
           )}
           {vocab.error && <p className="error-text">{vocab.error}</p>}
         </div>
@@ -103,6 +113,15 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
             />
           )}
           {englishQuiz.error && <p className="error-text">{englishQuiz.error}</p>}
+        </div>
+        <div className={visibleIf(englishTab === 'writing', 'panel')}>
+          <WritingPractice
+            entries={writing.entries}
+            loading={writing.loading}
+            pending={writing.pending}
+            error={writing.error}
+            onSubmit={writing.submit}
+          />
         </div>
       </section>
 

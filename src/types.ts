@@ -30,12 +30,25 @@ export type Theme = 'light' | 'dark'
 
 export type MainTab = 'english' | 'architecture'
 
-export type EnglishSubTab = 'chat' | 'vocab' | 'quiz'
+export type EnglishSubTab = 'chat' | 'vocab' | 'quiz' | 'writing'
 
 export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
 
 export type ChatMode = 'tutor' | 'mentor'
 
+export type AiMode = ChatMode | 'writing-feedback'
+
+export interface WritingEntry {
+  id: number
+  prompt: string
+  submission: string
+  feedback: string
+  createdAt: string
+}
+
 export type QuizKey = Database['public']['Enums']['quiz_key']
 
-export type VocabResult = 'known' | 'unknown'
+export interface VocabProgress {
+  box: number
+  nextReview: number
+}

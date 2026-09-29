@@ -122,7 +122,9 @@
 
 - Supabase Edge Functions don't rate-limit for you — add a simple check (e.g. count recent rows in a small `ai_usage` table per user, reject past a daily cap) so one runaway loop can't burn your API budget.
 
-## Phase 4 — Fix quiz repetition
+## Phase 4 — Fix quiz repetition — ✅ Done 2026-09-29
+
+**Outcome:** every answer upserts `quiz_question_history`; rounds are chosen by a pure `pickRound()` (`src/lib/quizRound.ts`, unit-tested) in the priority order below; `QuizEngine` plays rounds in the given order and is remounted per round via `key={roundId}`. Ordering is done client-side (fine at 24 questions; move to a SQL function if the bank grows to thousands).
 
 **On each question shown**, upsert a row into `quiz_question_history` (user_id, question_id, last_seen = now(), correct).
 
@@ -183,5 +185,7 @@ Pull enough from the top of that ordering to fill a quiz (e.g. 12 questions). Th
 - PWA installability
 - "Word/topic of the day" on open
 - Any multi-user/sharing features
+- AI-planned quiz questions adapted to your progress (generate new questions from roadmap progress, quiz history and writing mistakes, reviewed before they enter the bank) — needs the API key set and enough progress data to plan from
+- Spaced repetition for quiz questions (the Leitner boxes from Phase 6 applied to `quiz_question_history`), so questions answered right many times stop appearing every round
 
 None of these change how the app works underneath — they're additive, and the schema above doesn't need to anticipate them.

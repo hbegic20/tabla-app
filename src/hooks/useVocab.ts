@@ -1,25 +1,12 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { VocabResult, VocabWord } from '../types'
-
-function isVocabResult(value: string | null): value is VocabResult {
-  return value === 'known' || value === 'unknown'
-}
-
-function withResult(
-  results: ReadonlyMap<number, VocabResult>,
-  wordId: number,
-  result: VocabResult | undefined,
-) {
-  const next = new Map(results)
-  if (result) next.set(wordId, result)
-  else next.delete(wordId)
-  return next
-}
+import { isDue, review } from '../lib/leitner'
+import type { VocabProgress, VocabWord } from '../types'
 
 export function useVocab(userId: string) {
   const [words, setWords] = useState<VocabWord[]>([])
-  const [results, setResults] = useState<ReadonlyMap<number, VocabResult>>(() => new Map())
+  const [progress, setProgress] = useState<ReadonlyMap<number, VocabProgress>>(() => new Map())
+  const [dueIds, setDueIds] = useState<readonly number[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,20 +16,22 @@ export function useVocab(userId: string) {
     async function load() {
       const { data, error } = await supabase
         .from('vocab_words')
-        .select('id, en, bs, example, vocab_progress(last_result)')
+        .select('id, en, bs, example, vocab_progress(box, next_review)')
         .order('id')
 
       if (ignore) return
       if (error) {
         setError(error.message)
       } else {
-        setWords(data.map(({ id, en, bs, example }) => ({ id, en, bs, example })))
-        const loaded = new Map<number, VocabResult>()
+        const now = Date.now()
+        const loaded = new Map<number, VocabProgress>()
         for (const row of data) {
-          const progress = row.vocab_progress.at(0)
-          if (progress && isVocabResult(progress.last_result)) loaded.set(row.id, progress.last_result)
+          const p = row.vocab_progress.at(0)
+          if (p) loaded.set(row.id, { box: p.box, nextReview: Date.parse(p.next_review) })
         }
-        setResults(loaded)
+        setWords(data.map(({ id, en, bs, example }) => ({ id, en, bs, example })))
+        setProgress(loaded)
+        setDueIds(data.filter((row) => isDue(loaded.get(row.id)?.nextReview, now)).map((row) => row.id))
       }
       setLoading(false)
     }
@@ -53,20 +42,37 @@ export function useVocab(userId: string) {
     }
   }, [])
 
-  async function mark(wordId: number, result: VocabResult) {
-    const previous = results.get(wordId)
-    setResults((prev) => withResult(prev, wordId, result))
+  async function mark(wordId: number, correct: boolean) {
+    const previousProgress = progress
+    const previousDue = dueIds
+    const next = review(progress.get(wordId)?.box ?? 0, correct, Date.now())
+
+    setProgress((prev) => new Map(prev).set(wordId, next))
+    if (correct) setDueIds((prev) => prev.filter((id) => id !== wordId))
     setError(null)
 
-    const { error } = await supabase
-      .from('vocab_progress')
-      .upsert({ user_id: userId, word_id: wordId, last_result: result }, { onConflict: 'user_id,word_id' })
+    const { error } = await supabase.from('vocab_progress').upsert(
+      {
+        user_id: userId,
+        word_id: wordId,
+        box: next.box,
+        next_review: new Date(next.nextReview).toISOString(),
+        last_result: correct ? 'known' : 'unknown',
+      },
+      { onConflict: 'user_id,word_id' },
+    )
 
     if (error) {
-      setResults((prev) => withResult(prev, wordId, previous))
+      setProgress(previousProgress)
+      setDueIds(previousDue)
       setError(error.message)
     }
   }
 
-  return { words, results, loading, error, mark }
+  const wordsById = new Map(words.map((w) => [w.id, w]))
+  const due = dueIds.flatMap((id) => wordsById.get(id) ?? [])
+  const upcoming = [...progress.values()].map((p) => p.nextReview).filter((t) => !Number.isNaN(t))
+  const nextReviewAt = upcoming.length ? Math.min(...upcoming) : null
+
+  return { due, progress, totalWords: words.length, nextReviewAt, loading, error, mark }
 }

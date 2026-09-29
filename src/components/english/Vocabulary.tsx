@@ -1,10 +1,13 @@
 import { useState, type KeyboardEvent } from 'react'
-import type { VocabResult, VocabWord } from '../../types'
+import { MAX_BOX } from '../../lib/leitner'
+import type { VocabProgress, VocabWord } from '../../types'
 
 interface VocabularyProps {
-  words: VocabWord[]
-  results: ReadonlyMap<number, VocabResult>
-  onMark: (wordId: number, result: VocabResult) => void
+  due: VocabWord[]
+  progress: ReadonlyMap<number, VocabProgress>
+  totalWords: number
+  nextReviewAt: number | null
+  onMark: (wordId: number, correct: boolean) => void
 }
 
 function FlipCard({ word }: { word: VocabWord }) {
@@ -41,35 +44,47 @@ function FlipCard({ word }: { word: VocabWord }) {
   )
 }
 
-function Vocabulary({ words, results, onMark }: VocabularyProps) {
-  const knownCount = words.filter((w) => results.get(w.id) === 'known').length
+function formatNextReview(timestamp: number) {
+  return new Date(timestamp).toLocaleString(undefined, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+function Vocabulary({ due, progress, totalWords, nextReviewAt, onMark }: VocabularyProps) {
+  if (due.length === 0) {
+    return (
+      <div className="score-screen">
+        <div className="big">✓</div>
+        <p className="muted">
+          Nothing due — you're caught up.
+          {nextReviewAt !== null && <> Next review: {formatNextReview(nextReviewAt)}.</>}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <>
       <p className="empty-hint" style={{ paddingTop: 0 }}>
-        Tap a card to flip it, then mark whether you know the word. {knownCount} / {words.length} known.
+        {due.length} of {totalWords} words due today. Flip a card, then mark it — words you know come back
+        later and later; words you're learning stay here.
       </p>
       <div className="card-grid">
-        {words.map((word) => {
-          const result = results.get(word.id)
+        {due.map((word) => {
+          const box = progress.get(word.id)?.box
           return (
             <div key={word.id} className="vocab-item">
               <FlipCard word={word} />
+              <div className="vocab-box muted">{box === undefined ? 'New' : `Box ${box} / ${MAX_BOX}`}</div>
               <div className="vocab-actions" role="group" aria-label={`Mark "${word.en}"`}>
-                <button
-                  type="button"
-                  className={result === 'known' ? 'vocab-mark known active' : 'vocab-mark known'}
-                  aria-pressed={result === 'known'}
-                  onClick={() => onMark(word.id, 'known')}
-                >
+                <button type="button" className="vocab-mark known" onClick={() => onMark(word.id, true)}>
                   Know it
                 </button>
-                <button
-                  type="button"
-                  className={result === 'unknown' ? 'vocab-mark unknown active' : 'vocab-mark unknown'}
-                  aria-pressed={result === 'unknown'}
-                  onClick={() => onMark(word.id, 'unknown')}
-                >
+                <button type="button" className="vocab-mark unknown" onClick={() => onMark(word.id, false)}>
                   Learning
                 </button>
               </div>

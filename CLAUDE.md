@@ -62,6 +62,10 @@ tabla-app/                   # repo root = Vite project root
     types.ts                   # shared interfaces (VocabWord, QuizQuestion, etc.)
     lib/
       supabase.ts              # typed Supabase client
+      database.types.ts        # generated — npm run types:db
+      ai.ts                    # askAi(): calls the ai-chat Edge Function
+      quizRound.ts             # pickRound(): quiz question priority (pure)
+      leitner.ts               # review(): vocab spaced repetition (pure)
     hooks/
       useTheme.ts
       useChat.ts               # tutor/mentor conversation; calls ai-chat from Phase 3
@@ -69,6 +73,7 @@ tabla-app/                   # repo root = Vite project root
       useRoadmap.ts
       useVocab.ts
       useQuiz.ts
+      useWriting.ts
     components/
       AuthForm.tsx             # sign in / sign up, shown when logged out
       Workspace.tsx            # the logged-in app: tabs, panels, chat state

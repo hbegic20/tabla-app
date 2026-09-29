@@ -1,6 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-type Mode = 'tutor' | 'mentor'
+type Mode = 'tutor' | 'mentor' | 'writing-feedback'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -26,13 +26,25 @@ const SYSTEM_PROMPTS: Record<Mode, string> = {
     'already know when it helps, use short concrete examples or tiny code ' +
     'snippets where useful, and avoid unnecessary jargon. Keep answers ' +
     'focused — a few short paragraphs or a short list, not an essay.',
+  'writing-feedback':
+    'You are an English writing coach for a native Bosnian speaker. The ' +
+    'user sends a writing prompt and their response to it. Reply in plain ' +
+    'text (no markdown) with exactly three parts:\n' +
+    '1. "Corrected version:" followed by their text with grammar, word-order, ' +
+    'preposition and word-choice errors fixed, keeping their meaning and voice.\n' +
+    '2. "Key corrections:" the 2-3 most important corrections only (not every ' +
+    'tiny stylistic point), each with a one-sentence explanation. If a rule ' +
+    'is genuinely confusing, add a short note in Bosnian in parentheses.\n' +
+    '3. One honest sentence of encouragement.\n' +
+    'If the text has no real errors, say so and suggest one way to make it ' +
+    'sound more natural.',
 }
 
 const MODEL = Deno.env.get('ANTHROPIC_MODEL') ?? 'claude-haiku-4-5-20251001'
 const DAILY_CAP = 50
 const MAX_MESSAGES = 20
 const MAX_CHARS = 4000
-const MAX_TOKENS = 600
+const MAX_TOKENS: Record<Mode, number> = { tutor: 600, mentor: 600, 'writing-feedback': 1000 }
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -48,7 +60,7 @@ function json(body: unknown, status = 200) {
 }
 
 function isMode(value: unknown): value is Mode {
-  return value === 'tutor' || value === 'mentor'
+  return value === 'tutor' || value === 'mentor' || value === 'writing-feedback'
 }
 
 function parseMessages(value: unknown): ChatMessage[] | null {
@@ -130,7 +142,7 @@ Deno.serve(async (req) => {
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: MAX_TOKENS,
+      max_tokens: MAX_TOKENS[mode],
       system: SYSTEM_PROMPTS[mode],
       messages: conversation,
     }),
