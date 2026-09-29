@@ -1,7 +1,7 @@
 # How login works in Tabla (frontend + Supabase)
 
-_Written 2026-09-28, at the end of Phase 2 step 2 (auth). Data is not yet
-loaded from Supabase — that's steps 3–5._
+_Written 2026-09-28 during Phase 2; section 7 updated 2026-09-29. Sections 1–6
+describe the auth flow, which hasn't changed since._
 
 ## 1. The big picture
 
@@ -217,15 +217,18 @@ Consequences:
   get that prefix.
 - `.env.local` is gitignored; `.env.example` (committed) shows the names.
 
-## 7. What's not wired yet
+## 7. What the login unlocks (updated 2026-09-29)
 
-Logging in works, but the app's data still comes from `src/data/` and local
-React state — progress is not saved to your account yet.
+Every data hook now runs with your session, so everything below is saved per
+user and protected by RLS — the two-user test at the end of Phase 2 confirmed
+each account only sees its own data:
 
-Remaining Phase 2 steps:
+| Hook | Reads | Writes |
+| --- | --- | --- |
+| `useRoadmap` | topics + your `roadmap_progress` | upsert `roadmap_progress` |
+| `useQuiz` | questions + your `quiz_question_history`, your `quiz_attempts` | upsert history, insert attempts |
+| `useVocab` | words + your `vocab_progress` | upsert `vocab_progress` |
+| `useWriting` | your `writing_entries` | insert `writing_entries` |
+| `useChat` / `askAi` | — | calls `ai-chat`, which checks your token itself |
 
-1. **`useRoadmap`** — load topics + your progress, toggle with `.upsert()`
-2. **`useQuiz(quizKey)`** — questions from the DB, save each finished quiz to
-   `quiz_attempts`, real "best so far"
-3. **`useVocab`** — words from the DB, known/unknown buttons with `.upsert()`
-4. **Two-user test** — two accounts, confirm each only sees its own progress
+See [features.md](features.md) and [database.md](database.md) for details.

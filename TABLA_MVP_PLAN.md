@@ -197,6 +197,33 @@ _Updated 2026-09-29: the app is now a Vite build (not a single HTML file), hoste
 
 - Sign up for real, then run through roadmap / vocab review / both quizzes / tutor + mentor chat / writing feedback once; confirm rows appear in Supabase. Then mark Phases 3, 5, 6 and 7 ✅.
 
+## Phase 8 — Learning memory (post-MVP, planned 2026-09-29)
+
+**Goal:** the app remembers *your* mistakes and uses them to plan each day, instead of every session starting from zero. **Starts only after Phase 7 is live** — every step needs the API key, and real usage data makes step 3 worthwhile. Build the steps in order; each is useful on its own.
+
+**Step 1 — Save conversations**
+
+- New tables `chat_sessions` (user_id, mode, started_at) and `chat_messages` (session_id, role, content, created_at), RLS own-rows like the other user tables
+- `useChat` loads the latest session on open and appends messages as they're sent/received; add a "new conversation" button
+- Payoff: chat history survives reloads; raw material for steps 2–3
+
+**Step 2 — Mistakes log (the key piece)**
+
+- New table `mistakes` (user_id, source `'tutor' | 'writing'`, category, wrong, right, explanation, created_at); categories like `articles`, `prepositions`, `verb-tense`, `word-order`, `word-choice`
+- Tutor and writing-feedback modes also return the corrections as structured JSON alongside the reply; the Edge Function validates it and inserts the rows (never trust the shape blindly)
+- A small "Your common mistakes" view (top categories + recent examples) — this also covers part of the deferred "stats dashboard"
+
+**Step 3 — Daily lesson**
+
+- New `daily-lesson` mode in `ai-chat`, fed a **compact summary** (not raw history): top mistake categories, weakest vocab (box 0–1), recently missed quiz questions, next unfinished roadmap topic
+- Returns a plan: ~5 vocab words to review, ~3 targeted quiz questions, a writing prompt that practises the most common mistake, the next roadmap topic + one mentor question to start
+- Cached in `daily_lessons` (user_id, lesson_date, content jsonb, unique per user per day) so it's generated **once per day** — about one extra AI call per user per day
+- A "Today" view that links each item into the existing tabs
+
+**Guards:** summaries not full history (cost); everything RLS-protected and deleted with the account (privacy); AI output validated before it's stored or shown.
+
+**Overlap with the deferred list:** step 3 is the "AI-planned quiz questions" idea below, and step 2's mistakes view covers part of the "stats dashboard" — do them here rather than separately.
+
 ## Deliberately deferred (add later, only if you miss them)
 
 - Streak tracking

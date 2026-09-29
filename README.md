@@ -5,8 +5,11 @@ A two-sided learning app:
 - **English** — AI chat tutor, vocabulary flashcards, grammar quiz
 - **Architecture** — backend learning roadmap, AI mentor chat, quiz
 
-Built with React + TypeScript (Vite). Supabase (Postgres, Auth, Edge Functions)
-comes in from Phase 1 onwards — see [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md).
+Built with React + TypeScript (Vite) on Supabase (Postgres, Auth, Edge
+Functions) — see [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md) for scope and phases.
+
+**How it all works:** start at [`docs/README.md`](docs/README.md) — architecture,
+every feature, the database, login, and the AI function.
 
 ## Requirements
 
@@ -149,8 +152,9 @@ message.
 | 2     | Wire the frontend to Supabase       | ✅ Done      |
 | 3     | AI tutor + mentor via Edge Function | 🟡 Deployed, API key pending |
 | 4     | Fix quiz repetition                 | ✅ Done      |
-| 5     | Writing practice                    | Not started |
-| 6     | Spaced repetition for vocabulary    | Not started |
-| 7     | Deploy                              | Not started |
+| 5     | Writing practice                    | 🟡 Built, API key pending |
+| 6     | Spaced repetition for vocabulary    | 🟡 Built, awaiting your test |
+| 7     | Deploy                              | Code prepared, not deployed |
+| 8     | Learning memory (post-MVP)          | Planned     |
 
 Details for each phase are in [`TABLA_MVP_PLAN.md`](TABLA_MVP_PLAN.md).
