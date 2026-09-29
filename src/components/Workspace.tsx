@@ -43,8 +43,8 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
   const mentorChat = useChat('mentor')
   const roadmap = useRoadmap(userId)
   const vocab = useVocab(userId)
-  const englishQuiz = useQuiz('english')
-  const archQuiz = useQuiz('architecture')
+  const englishQuiz = useQuiz('english', userId)
+  const archQuiz = useQuiz('architecture', userId)
 
   useEffect(() => {
     document.body.classList.toggle('side-english', mainTab === 'english')
@@ -92,10 +92,13 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
             <p className="empty-hint">Loading quiz…</p>
           ) : (
             <QuizEngine
-              questions={englishQuiz.questions}
+              key={englishQuiz.roundId}
+              questions={englishQuiz.round}
               best={englishQuiz.best}
               side="english"
+              onAnswer={englishQuiz.recordAnswer}
               onFinish={englishQuiz.recordAttempt}
+              onNewRound={englishQuiz.newRound}
               onAskMore={askTutor}
             />
           )}
@@ -132,10 +135,13 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
             <p className="empty-hint">Loading quiz…</p>
           ) : (
             <QuizEngine
-              questions={archQuiz.questions}
+              key={archQuiz.roundId}
+              questions={archQuiz.round}
               best={archQuiz.best}
               side="architecture"
+              onAnswer={archQuiz.recordAnswer}
               onFinish={archQuiz.recordAttempt}
+              onNewRound={archQuiz.newRound}
               onAskMore={askMentor}
             />
           )}

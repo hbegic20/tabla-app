@@ -6,23 +6,13 @@ interface QuizEngineProps {
   questions: QuizQuestion[]
   best: number | null
   side: MainTab
+  onAnswer: (questionId: number, correct: boolean) => void
   onFinish: (score: number, total: number) => void
+  onNewRound: () => void
   onAskMore: (question: string) => void
 }
 
-function shuffledOrder(n: number): number[] {
-  const order = Array.from({ length: n }, (_, i) => i)
-  for (let i = order.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    const tmp = order[i]
-    order[i] = order[j]
-    order[j] = tmp
-  }
-  return order
-}
-
-function QuizEngine({ questions, best, side, onFinish, onAskMore }: QuizEngineProps) {
-  const [order, setOrder] = useState(() => shuffledOrder(questions.length))
+function QuizEngine({ questions, best, side, onAnswer, onFinish, onNewRound, onAskMore }: QuizEngineProps) {
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
@@ -45,14 +35,6 @@ function QuizEngine({ questions, best, side, onFinish, onAskMore }: QuizEnginePr
     setFinished(true)
   }
 
-  function restart() {
-    setOrder(shuffledOrder(total))
-    setIdx(0)
-    setScore(0)
-    setSelected(null)
-    setFinished(false)
-  }
-
   if (finished) {
     const pct = percent(score, total)
     return (
@@ -63,19 +45,21 @@ function QuizEngine({ questions, best, side, onFinish, onAskMore }: QuizEnginePr
         <p className="muted">
           {pct}% correct · best so far: {Math.max(best ?? 0, pct)}%
         </p>
-        <button type="button" className={btnClass} onClick={restart}>
-          Try again with new order
+        <button type="button" className={btnClass} onClick={onNewRound}>
+          Start a new round
         </button>
       </div>
     )
   }
 
-  const item = questions[order[idx]]
+  const item = questions[idx]
 
   function answer(i: number) {
     if (selected !== null) return
+    const correct = i === item.correct
     setSelected(i)
-    if (i === item.correct) setScore((s) => s + 1)
+    if (correct) setScore((s) => s + 1)
+    onAnswer(item.id, correct)
   }
 
   function optionClass(i: number) {
