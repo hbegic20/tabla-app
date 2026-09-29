@@ -71,6 +71,34 @@ models without a code change. Each user is limited to 50 AI messages per 24
 hours (`DAILY_CAP` in the function, enforced by `consume_ai_quota()` in the
 database). Set a monthly spend limit in the Anthropic Console as a backstop.
 
+The function only answers browsers on origins listed in the `ALLOWED_ORIGINS`
+secret (comma-separated). If unset, it allows `http://localhost:5173` and
+`http://127.0.0.1:5173` only.
+
+## Deploy (Vercel)
+
+The frontend is a static Vite build hosted on Vercel; everything else runs on
+Supabase.
+
+1. **Vercel → Add New Project →** import this GitHub repo. The **Vite** preset
+   fills in build command `npm run build` and output directory `dist`.
+2. **Environment variables** (Production + Preview): `VITE_SUPABASE_URL` and
+   `VITE_SUPABASE_PUBLISHABLE_KEY` — same values as `.env.local`. Never add the
+   Anthropic key here.
+3. **Deploy.** Every push to `main` redeploys automatically; other branches get
+   preview URLs.
+4. **Supabase → Authentication → URL Configuration:** set Site URL to the
+   Vercel URL and keep `http://localhost:5173` under Redirect URLs.
+5. **Allow the live origin to call the AI:**
+
+   ```bash
+   npx supabase secrets set ALLOWED_ORIGINS=https://<app>.vercel.app,http://localhost:5173
+   npx supabase functions deploy ai-chat
+   ```
+
+Node is pinned to `22.x` (`engines` in `package.json`) so Vercel builds with
+the same major version as local development.
+
 ## Scripts
 
 | Command           | What it does                                              |

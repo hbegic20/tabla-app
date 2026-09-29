@@ -172,10 +172,30 @@ Pull enough from the top of that ordering to fill a quiz (e.g. 12 questions). Th
 
 ## Phase 7 — Deploy the MVP
 
-- Push the frontend to a GitHub repo
-- Connect it to Netlify or Vercel — static hosting, no build step needed for a single HTML file
-- Double-check the Supabase anon key is fine to expose client-side (it is, by design — RLS is what actually protects data, not hiding this key) but the `ANTHROPIC_API_KEY` must only ever live in Supabase secrets, never in the deployed frontend
-- Sign up for real, run through roadmap/vocab/quiz/writing/chat once end to end on the live URL
+_Updated 2026-09-29: the app is now a Vite build (not a single HTML file), hosted on **Vercel** (Hobby plan)._
+
+**Code prep (done):** `ai-chat` CORS locked to an `ALLOWED_ORIGINS` secret (defaults to localhost); Node pinned to `22.x` via `engines`; unused `@supabase/ssr` removed; Edge Function passes `deno check`.
+
+**Frontend on Vercel**
+
+- Repo is already on GitHub (`hbegic20/tabla-app`) — push `main`
+- Vercel → Add New Project → import the repo; framework preset **Vite** (build `npm run build`, output `dist`)
+- Environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (same values as `.env.local`) — then deploy
+- The publishable key is fine to expose client-side (RLS protects data); `ANTHROPIC_API_KEY` must only ever live in Supabase secrets, never in Vercel
+
+**Point Supabase at the live URL**
+
+- Auth → URL Configuration: Site URL = the Vercel URL; keep `http://localhost:5173` in Redirect URLs for dev
+- Auth → Email: keep "Confirm email" on; raise minimum password length to 8
+- `supabase secrets set ALLOWED_ORIGINS=https://<app>.vercel.app,http://localhost:5173` then `supabase functions deploy ai-chat`
+
+**Turn on the AI (deferred from Phase 3)**
+
+- Anthropic Console: create key + monthly spend limit → `supabase secrets set ANTHROPIC_API_KEY=...`
+
+**End-to-end check on the live URL**
+
+- Sign up for real, then run through roadmap / vocab review / both quizzes / tutor + mentor chat / writing feedback once; confirm rows appear in Supabase. Then mark Phases 3, 5, 6 and 7 ✅.
 
 ## Deliberately deferred (add later, only if you miss them)
 

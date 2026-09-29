@@ -46,16 +46,25 @@ const MAX_MESSAGES = 20
 const MAX_CHARS = 4000
 const MAX_TOKENS: Record<Mode, number> = { tutor: 600, mentor: 600, 'writing-feedback': 1000 }
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') ?? 'http://localhost:5173,http://127.0.0.1:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+function corsHeadersFor(origin: string | null): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  }
+  if (origin && ALLOWED_ORIGINS.includes(origin)) headers['Access-Control-Allow-Origin'] = origin
+  return headers
 }
 
-function json(body: unknown, status = 200) {
+function json(body: unknown, status: number, cors: Record<string, string>) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...cors, 'Content-Type': 'application/json' },
   })
 }
 
@@ -88,38 +97,41 @@ function prepareConversation(messages: ChatMessage[]): ChatMessage[] {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
-  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
+  const cors = corsHeadersFor(req.headers.get('Origin'))
+  const respond = (body: unknown, status = 200) => json(body, status, cors)
+
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method !== 'POST') return respond({ error: 'Method not allowed' }, 405)
 
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
-  if (!apiKey) return json({ error: 'The AI is not configured yet.' }, 500)
+  if (!apiKey) return respond({ error: 'The AI is not configured yet.' }, 500)
 
   const authHeader = req.headers.get('Authorization')
-  if (!authHeader) return json({ error: 'Not signed in.' }, 401)
+  if (!authHeader) return respond({ error: 'Not signed in.' }, 401)
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
     global: { headers: { Authorization: authHeader } },
   })
 
   const { data: userData, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
-  if (authError || !userData.user) return json({ error: 'Not signed in.' }, 401)
+  if (authError || !userData.user) return respond({ error: 'Not signed in.' }, 401)
 
   let body: unknown
   try {
     body = await req.json()
   } catch {
-    return json({ error: 'Invalid JSON body.' }, 400)
+    return respond({ error: 'Invalid JSON body.' }, 400)
   }
-  if (typeof body !== 'object' || body === null) return json({ error: 'Invalid request.' }, 400)
+  if (typeof body !== 'object' || body === null) return respond({ error: 'Invalid request.' }, 400)
 
   const { mode, messages } = body as Record<string, unknown>
-  if (!isMode(mode)) return json({ error: 'Unknown mode.' }, 400)
+  if (!isMode(mode)) return respond({ error: 'Unknown mode.' }, 400)
 
   const parsed = parseMessages(messages)
-  if (!parsed) return json({ error: 'Invalid messages.' }, 400)
+  if (!parsed) return respond({ error: 'Invalid messages.' }, 400)
 
   const conversation = prepareConversation(parsed)
-  if (conversation.at(-1)?.role !== 'user') return json({ error: 'The last message must be from the user.' }, 400)
+  if (conversation.at(-1)?.role !== 'user') return respond({ error: 'The last message must be from the user.' }, 400)
 
   const { data: allowed, error: quotaError } = await supabase.rpc('consume_ai_quota', {
     p_mode: mode,
@@ -127,10 +139,10 @@ Deno.serve(async (req) => {
   })
   if (quotaError) {
     console.error('quota check failed', quotaError)
-    return json({ error: 'Could not check your usage limit.' }, 500)
+    return respond({ error: 'Could not check your usage limit.' }, 500)
   }
   if (!allowed) {
-    return json({ error: `You've used all ${DAILY_CAP} AI messages for today — try again tomorrow.` }, 429)
+    return respond({ error: `You've used all ${DAILY_CAP} AI messages for today — try again tomorrow.` }, 429)
   }
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -150,7 +162,7 @@ Deno.serve(async (req) => {
 
   if (!response.ok) {
     console.error('Anthropic API error', response.status, await response.text())
-    return json({ error: "The AI couldn't answer just now. Try again in a moment." }, 502)
+    return respond({ error: "The AI couldn't answer just now. Try again in a moment." }, 502)
   }
 
   const result = (await response.json()) as { content?: { type: string; text?: string }[] }
@@ -160,6 +172,6 @@ Deno.serve(async (req) => {
     .join('')
     .trim()
 
-  if (!reply) return json({ error: 'The AI returned an empty reply.' }, 502)
-  return json({ reply })
+  if (!reply) return respond({ error: 'The AI returned an empty reply.' }, 502)
+  return respond({ reply })
 })
