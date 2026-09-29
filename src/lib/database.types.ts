@@ -42,7 +42,7 @@ export type Database = {
       quiz_attempts: {
         Row: {
           id: number
-          quiz_key: string
+          quiz_key: Database["public"]["Enums"]["quiz_key"]
           score: number
           taken_at: string
           total: number
@@ -50,7 +50,7 @@ export type Database = {
         }
         Insert: {
           id?: never
-          quiz_key: string
+          quiz_key: Database["public"]["Enums"]["quiz_key"]
           score: number
           taken_at?: string
           total: number
@@ -58,7 +58,7 @@ export type Database = {
         }
         Update: {
           id?: never
-          quiz_key?: string
+          quiz_key?: Database["public"]["Enums"]["quiz_key"]
           score?: number
           taken_at?: string
           total?: number
@@ -102,7 +102,7 @@ export type Database = {
           id: number
           options: Json
           question: string
-          quiz_key: string
+          quiz_key: Database["public"]["Enums"]["quiz_key"]
         }
         Insert: {
           correct_index: number
@@ -110,7 +110,7 @@ export type Database = {
           id?: never
           options: Json
           question: string
-          quiz_key: string
+          quiz_key: Database["public"]["Enums"]["quiz_key"]
         }
         Update: {
           correct_index?: number
@@ -118,7 +118,7 @@ export type Database = {
           id?: never
           options?: Json
           question?: string
-          quiz_key?: string
+          quiz_key?: Database["public"]["Enums"]["quiz_key"]
         }
         Relationships: []
       }
@@ -260,7 +260,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      quiz_key: "english" | "architecture"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -390,6 +390,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      quiz_key: ["english", "architecture"],
+    },
   },
 } as const

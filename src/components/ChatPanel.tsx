@@ -4,6 +4,8 @@ import type { ChatMessage, MainTab } from '../types'
 interface ChatPanelProps {
   side: MainTab
   messages: ChatMessage[]
+  pending: boolean
+  error: string | null
   onSend: (text: string) => void
 }
 
@@ -22,7 +24,7 @@ const COPY: Record<MainTab, { assistant: string; placeholder: string; hint: stri
 
 const MAX_INPUT_HEIGHT = 120
 
-function ChatPanel({ side, messages, onSend }: ChatPanelProps) {
+function ChatPanel({ side, messages, pending, error, onSend }: ChatPanelProps) {
   const [draft, setDraft] = useState('')
   const logRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -36,7 +38,7 @@ function ChatPanel({ side, messages, onSend }: ChatPanelProps) {
   useEffect(() => {
     const log = logRef.current
     if (log) log.scrollTop = log.scrollHeight
-  }, [messages])
+  }, [messages, pending, error])
 
   useLayoutEffect(() => {
     const input = inputRef.current
@@ -46,6 +48,7 @@ function ChatPanel({ side, messages, onSend }: ChatPanelProps) {
   }, [draft])
 
   function submit() {
+    if (pending || !draft.trim()) return
     onSend(draft)
     setDraft('')
   }
@@ -72,6 +75,13 @@ function ChatPanel({ side, messages, onSend }: ChatPanelProps) {
             </div>
           ))
         )}
+        {pending && (
+          <div className="msg tutor thinking">
+            <span className="role">{copy.assistant}</span>
+            <div>Thinking…</div>
+          </div>
+        )}
+        {error && <p className="error-text">{error}</p>}
       </div>
       <div className="chat-input-row">
         <textarea
@@ -82,7 +92,12 @@ function ChatPanel({ side, messages, onSend }: ChatPanelProps) {
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button type="button" className={side === 'architecture' ? 'btn blue' : 'btn'} onClick={submit}>
+        <button
+          type="button"
+          className={side === 'architecture' ? 'btn blue' : 'btn'}
+          disabled={pending}
+          onClick={submit}
+        >
           Send
         </button>
       </div>

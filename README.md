@@ -55,6 +55,22 @@ npm run types:db              # regenerate src/lib/database.types.ts
 Run `npm run types:db` after every schema change so TypeScript matches the
 database.
 
+### AI chat (Edge Function)
+
+The tutor and mentor chats call the `ai-chat` Edge Function
+(`supabase/functions/ai-chat/`), which calls the Claude API. The Anthropic key
+lives only in Supabase secrets — never in `.env.local` or the frontend.
+
+```bash
+npx supabase secrets set ANTHROPIC_API_KEY=<your key>   # once
+npx supabase functions deploy ai-chat                   # after every change to the function
+```
+
+Optional: `npx supabase secrets set ANTHROPIC_MODEL=<model id>` to switch
+models without a code change. Each user is limited to 50 AI messages per 24
+hours (`DAILY_CAP` in the function, enforced by `consume_ai_quota()` in the
+database). Set a monthly spend limit in the Anthropic Console as a backstop.
+
 ## Scripts
 
 | Command           | What it does                                              |
@@ -77,12 +93,12 @@ src/
   App.tsx           # root component
   index.css         # all styles, ported from the original HTML version
   types.ts          # shared interfaces (VocabWord, QuizQuestion, RoadmapTopic, ChatMessage)
-  data/             # AI system prompts (move to the Edge Function in Phase 3)
-  components/       # Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
-  hooks/            # useTheme, useChat
+  components/       # AuthForm, Workspace, Header, MainTabs, SubTabs, QuizEngine, ChatPanel, english/, architecture/
+  hooks/            # useAuth, useTheme, useChat, useRoadmap, useQuiz, useVocab
   lib/              # Supabase client + generated database types
 supabase/
   migrations/       # schema, RLS policies, seed data (SQL)
+  functions/ai-chat # Edge Function: auth, daily quota, Claude API call
 legacy/
   tabla.html        # the original single-file version — reference for the port
 ```
@@ -102,8 +118,8 @@ message.
 | ----- | ----------------------------------- | ----------- |
 | 0     | React + TypeScript scaffold         | ✅ Done      |
 | 1     | Supabase project setup              | ✅ Done      |
-| 2     | Wire the frontend to Supabase       | Not started |
-| 3     | AI tutor + mentor via Edge Function | Not started |
+| 2     | Wire the frontend to Supabase       | ✅ Done      |
+| 3     | AI tutor + mentor via Edge Function | 🟡 Deployed, API key pending |
 | 4     | Fix quiz repetition                 | Not started |
 | 5     | Writing practice                    | Not started |
 | 6     | Spaced repetition for vocabulary    | Not started |

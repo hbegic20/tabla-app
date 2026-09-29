@@ -60,7 +60,6 @@ tabla-app/                   # repo root = Vite project root
     App.tsx
     index.css                  # ported from the original vanilla version
     types.ts                   # shared interfaces (VocabWord, QuizQuestion, etc.)
-    data/                      # AI system prompts until they move into the ai-chat Edge Function
     lib/
       supabase.ts              # typed Supabase client
     hooks/

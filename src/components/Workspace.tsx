@@ -71,7 +71,13 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
       <section id="english-view" className={visibleIf(mainTab === 'english')}>
         <SubTabs tabs={ENGLISH_TABS} active={englishTab} onChange={setEnglishTab} />
         <div className={visibleIf(englishTab === 'chat', 'panel')}>
-          <ChatPanel side="english" messages={tutorChat.messages} onSend={tutorChat.send} />
+          <ChatPanel
+            side="english"
+            messages={tutorChat.messages}
+            pending={tutorChat.pending}
+            error={tutorChat.error}
+            onSend={tutorChat.send}
+          />
         </div>
         <div className={visibleIf(englishTab === 'vocab', 'panel')}>
           {vocab.loading ? (
@@ -113,7 +119,13 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
           {roadmap.error && <p className="error-text">{roadmap.error}</p>}
         </div>
         <div className={visibleIf(archTab === 'mentor', 'panel')}>
-          <ChatPanel side="architecture" messages={mentorChat.messages} onSend={mentorChat.send} />
+          <ChatPanel
+            side="architecture"
+            messages={mentorChat.messages}
+            pending={mentorChat.pending}
+            error={mentorChat.error}
+            onSend={mentorChat.send}
+          />
         </div>
         <div className={visibleIf(archTab === 'quiz', 'panel')}>
           {archQuiz.loading ? (

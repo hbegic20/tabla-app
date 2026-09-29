@@ -80,7 +80,9 @@
 - For `roadmap_progress`, `vocab_progress`, `quiz_question_history`, `quiz_attempts`, `writing_entries`: add a policy so a user can only `select`/`insert`/`update` rows where `user_id = auth.uid()`.
 - For `roadmap_topics`, `vocab_words`, `quiz_questions`: add a policy allowing any logged-in user to `select` (read-only, shared content, not user-specific).
 
-## Phase 2 — Wire the frontend to Supabase
+## Phase 2 — Wire the frontend to Supabase — ✅ Done 2026-09-28
+
+**Outcome:** typed client (`src/lib/supabase.ts` + generated `database.types.ts`, `npm run types:db`); `useAuth` + `AuthForm` gate a `Workspace` keyed by user id; `useRoadmap`, `useQuiz`, `useVocab` load via embedded selects and save with optimistic `.upsert()`/`.insert()`; two-user RLS test passed. Additions beyond the steps below: `quiz_key` became a Postgres enum (migration `20260928115913`) so `QuizKey` is derived from generated types; vocab cards got "Know it / Learning" buttons (new UI implied by the plan's "mark known/unknown"); `src/data/` content files deleted — the DB is the source.
 
 **Add the client**
 
@@ -101,7 +103,9 @@
 
 - Sign up with two test accounts and confirm each only ever sees their own progress — this is your proof that RLS is actually working, not just that the UI looks right.
 
-## Phase 3 — AI tutor + mentor via Edge Functions
+## Phase 3 — AI tutor + mentor via Edge Functions — 🟡 Deployed, waiting for API key (2026-09-29)
+
+**Status:** `ai-chat` Edge Function deployed (`verify_jwt = false`, auth checked in-function via `auth.getUser()`); system prompts moved server-side; daily cap of 50/user enforced atomically by `consume_ai_quota()` (migration `20260928140000`, tested locally and live). Frontend `useChat` calls the function with pending/error states. **Deliberately deferred:** setting `ANTHROPIC_API_KEY` (`supabase secrets set`) until the app is close to done — until then chats reply "The AI is not configured yet." Mark ✅ only after a real tutor + mentor reply is verified.
 
 **Write one Edge Function** (`supabase functions new ai-chat`) that:
 

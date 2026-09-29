@@ -1,3 +1,5 @@
+import type { Database } from './lib/database.types'
+
 export interface VocabWord {
   id: number
   en: string
@@ -34,6 +36,6 @@ export type ArchSubTab = 'roadmap' | 'mentor' | 'quiz'
 
 export type ChatMode = 'tutor' | 'mentor'
 
-export type QuizKey = 'english' | 'architecture'
+export type QuizKey = Database['public']['Enums']['quiz_key']
 
 export type VocabResult = 'known' | 'unknown'
