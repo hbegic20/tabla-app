@@ -23,6 +23,7 @@ function App() {
     <Workspace
       key={session.user.id}
       userId={session.user.id}
+      email={session.user.email}
       isDark={isDark}
       onToggleTheme={toggleTheme}
       onSignOut={signOut}

@@ -1,10 +1,11 @@
 interface HeaderProps {
   isDark: boolean
   onToggleTheme: () => void
+  email?: string
   onSignOut?: () => void
 }
 
-function Header({ isDark, onToggleTheme, onSignOut }: HeaderProps) {
+function Header({ isDark, onToggleTheme, email, onSignOut }: HeaderProps) {
   return (
     <header className="top">
       <div className="titles">
@@ -35,6 +36,11 @@ function Header({ isDark, onToggleTheme, onSignOut }: HeaderProps) {
         </p>
       </div>
       <div className="header-actions">
+        {email && (
+          <span className="header-user muted" title={`Signed in as ${email}`}>
+            {email}
+          </span>
+        )}
         {onSignOut && (
           <button type="button" className="btn ghost small" onClick={onSignOut}>
             Sign out

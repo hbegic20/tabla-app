@@ -33,12 +33,13 @@ function visibleIf(visible: boolean, className = '') {
 
 interface WorkspaceProps {
   userId: string
+  email?: string
   isDark: boolean
   onToggleTheme: () => void
   onSignOut: () => void
 }
 
-function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps) {
+function Workspace({ userId, email, isDark, onToggleTheme, onSignOut }: WorkspaceProps) {
   const [mainTab, setMainTab] = useState<MainTab>('english')
   const [englishTab, setEnglishTab] = useState<EnglishSubTab>('chat')
   const [archTab, setArchTab] = useState<ArchSubTab>('roadmap')
@@ -69,7 +70,7 @@ function Workspace({ userId, isDark, onToggleTheme, onSignOut }: WorkspaceProps)
 
   return (
     <div className="wrap">
-      <Header isDark={isDark} onToggleTheme={onToggleTheme} onSignOut={onSignOut} />
+      <Header isDark={isDark} onToggleTheme={onToggleTheme} email={email} onSignOut={onSignOut} />
       <MainTabs active={mainTab} onChange={setMainTab} />
 
       <section id="english-view" className={visibleIf(mainTab === 'english')}>
